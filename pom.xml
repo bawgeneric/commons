@@ -188,6 +188,11 @@
                 <version>2.6</version>
                 <executions>
                     <execution>
+                        <configuration>
+                            <excludes>
+                                <exclude>logback-test.xml</exclude>
+                            </excludes>
+                        </configuration>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
