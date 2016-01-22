@@ -1,4 +1,4 @@
-package io.kodokojo.commons.service.connector.git;
+package io.kodokojo.commons.docker.fetcher.git;
 
 /*
  * #%L
@@ -22,10 +22,10 @@ package io.kodokojo.commons.service.connector.git;
  * #L%
  */
 
+import io.kodokojo.commons.docker.fetcher.DockerFileSource;
 import io.kodokojo.commons.model.DockerFile;
 import io.kodokojo.commons.model.ImageName;
 import io.kodokojo.commons.model.ImageNameBuilder;
-import io.kodokojo.commons.service.connector.DockerFileSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;

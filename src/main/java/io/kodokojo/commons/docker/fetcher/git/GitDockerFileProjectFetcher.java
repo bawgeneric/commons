@@ -1,4 +1,4 @@
-package io.kodokojo.commons.service.connector.git;
+package io.kodokojo.commons.docker.fetcher.git;
 
 /*
  * #%L
@@ -25,7 +25,7 @@ package io.kodokojo.commons.service.connector.git;
 import io.kodokojo.commons.model.DockerFile;
 import io.kodokojo.commons.model.ImageName;
 import io.kodokojo.commons.model.StringToDockerFileConverter;
-import io.kodokojo.commons.service.connector.DockerFileProjectFetcher;
+import io.kodokojo.commons.docker.fetcher.DockerFileProjectFetcher;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;

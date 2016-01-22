@@ -1,4 +1,4 @@
-package io.kodokojo.commons.service.connector;
+package io.kodokojo.commons.docker.fetcher;
 
 /*
  * #%L
@@ -26,16 +26,12 @@ package io.kodokojo.commons.service.connector;
 
 import io.kodokojo.commons.model.DockerFile;
 import io.kodokojo.commons.model.DockerFileScmEntry;
-import io.kodokojo.commons.model.ImageName;
 
-import java.util.Set;
+import java.io.File;
 
-public interface DockerFileSource<T extends DockerFileScmEntry> {
+public interface DockerFileProjectFetcher<T extends DockerFileScmEntry> {
 
-    Set<DockerFile> fetchAllDockerFile();
+    DockerFile fetchDockerFileScmEntry(T dockerFileScmEntry);
 
-    Set<DockerFile> fetchDockerFile(ImageName imageName);
-
-    T getDockerFileScmEntry(ImageName imageName);
-
+    File checkoutDockerFileProject(T dockerFileScmEntry);
 }

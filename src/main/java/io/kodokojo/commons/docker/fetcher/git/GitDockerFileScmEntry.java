@@ -1,4 +1,4 @@
-package io.kodokojo.commons.service.connector.git;
+package io.kodokojo.commons.docker.fetcher.git;
 
 /*
  * #%L

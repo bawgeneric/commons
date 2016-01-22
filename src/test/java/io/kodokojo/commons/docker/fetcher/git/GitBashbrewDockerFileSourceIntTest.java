@@ -1,4 +1,4 @@
-package io.kodokojo.commons.service.connector.git;
+package io.kodokojo.commons.docker.fetcher.git;
 
 /*
  * #%L
@@ -22,8 +22,8 @@ package io.kodokojo.commons.service.connector.git;
  * #L%
  */
 
+import io.kodokojo.commons.docker.fetcher.DockerFileSource;
 import io.kodokojo.commons.model.StringToImageNameConverter;
-import io.kodokojo.commons.service.connector.DockerFileSource;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
