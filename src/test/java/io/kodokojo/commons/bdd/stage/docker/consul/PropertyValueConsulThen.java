@@ -1,7 +1,4 @@
-/**
- *Tool set which allow to locate a {@link io.kodokojo.commons.utils.servicelocator.Service} .
- */
-package io.kodokojo.commons.utils.servicelocator;
+package io.kodokojo.commons.bdd.stage.docker.consul;
 
 /*
  * #%L
@@ -24,3 +21,25 @@ package io.kodokojo.commons.utils.servicelocator;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
+import com.tngtech.jgiven.Stage;
+import com.tngtech.jgiven.annotation.ExpectedScenarioState;
+import com.tngtech.jgiven.annotation.Quoted;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class PropertyValueConsulThen<SELF extends PropertyValueConsulThen<?>> extends Stage<SELF> {
+
+    @ExpectedScenarioState
+    Map<String, Object> consulValueProvides = new HashMap<>();
+
+    public SELF it_exist_a_key_$_with_value_$(@Quoted String key, @Quoted String value) {
+        Object actual = consulValueProvides.get(key);
+        assertThat(actual).isEqualTo(value);
+        return self();
+    }
+
+}

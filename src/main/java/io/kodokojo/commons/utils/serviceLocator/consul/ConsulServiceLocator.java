@@ -1,9 +1,31 @@
-package io.kodokojo.commons.utils.serviceLocator.consul;
+package io.kodokojo.commons.utils.servicelocator.consul;
+
+/*
+ * #%L
+ * docker-commons
+ * %%
+ * Copyright (C) 2016 Kodo-kojo
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 
 import com.google.gson.*;
 import io.kodokojo.commons.config.KodokojoConfig;
-import io.kodokojo.commons.utils.serviceLocator.Service;
-import io.kodokojo.commons.utils.serviceLocator.ServiceLocator;
+import io.kodokojo.commons.utils.servicelocator.Service;
+import io.kodokojo.commons.utils.servicelocator.ServiceLocator;
 
 import java.util.*;
 
@@ -27,7 +49,7 @@ public class ConsulServiceLocator implements ServiceLocator {
         this.kodokojoTags = new StringBuilder()
                 .append(KODOKOJO_PREFIXE).append("=").append(kodokojoConfig.projectName()).append(",")
                 .append(STACK_NAME_KEY).append("=").append(kodokojoConfig.stackName()).append(",")
-                .append(STACK_TYPY_KEY).append("=").append(kodokojoConfig.stackType())
+                .append(STACK_TYPE_KEY).append("=").append(kodokojoConfig.stackType())
                 .toString();
     }
 

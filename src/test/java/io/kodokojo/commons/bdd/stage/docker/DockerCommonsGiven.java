@@ -26,6 +26,7 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -45,8 +46,7 @@ import org.junit.Rule;
 import java.io.File;
 import java.util.*;
 
-//  TODO Move this class in a commons-commons project
-public class DockerCommonsGiven extends Stage<DockerCommonsGiven> {
+public class DockerCommonsGiven <SELF extends DockerCommonsGiven<?>> extends Stage<SELF> {
 
     public static final String DOCKER_IMAGE_MANAGER_KEY = "commons-image-manager";
 
@@ -93,17 +93,29 @@ public class DockerCommonsGiven extends Stage<DockerCommonsGiven> {
         dockerConfig = injector.getInstance(DockerConfig.class);
     }
 
+    protected String startContainer(CreateContainerCmd createContainerCmd, String name) {
+        if (createContainerCmd == null) {
+            throw new IllegalArgumentException("createContainerCmd must be defined.");
+        }
+        CreateContainerResponse response = createContainerCmd.exec();
+
+        dockerClient.startContainerCmd(response.getId()).exec();
+        dockerClientSupport.addContainerIdToClean(response.getId());
+        containers.put(name, response.getId());
+        return response.getId();
+    }
+
     @AfterScenario
     public void tear_down() {
         dockerClientSupport.stopAndRemoveContainer();
     }
 
-    public DockerCommonsGiven $_is_pull(@Quoted String imageName) {
+    public SELF $_is_pull(@Quoted String imageName) {
         dockerClientSupport.pullImage(imageName);
         return self();
     }
 
-    public DockerCommonsGiven kodokojo_docker_image_manager_is_started() {
+    public SELF kodokojo_docker_image_manager_is_started() {
         dockerClientSupport.pullImage("java:8-jre");
 
         File baseDire = new File("");
@@ -162,13 +174,13 @@ public class DockerCommonsGiven extends Stage<DockerCommonsGiven> {
         return self();
     }
 
-    public DockerCommonsGiven registry_send_notification_to_docker_image_manager() {
+    public SELF registry_send_notification_to_docker_image_manager() {
         dockerManagerLinked = true;
         return self();
     }
 
 
-    public DockerCommonsGiven $_image_is_started(String imageName, @Hidden int... ports) {
+    public SELF $_image_is_started(String imageName, @Hidden int... ports) {
 
         List<PortBinding> portBindings = new ArrayList<>();
         List<ExposedPort> exposedPorts = new ArrayList<>();
@@ -194,7 +206,7 @@ public class DockerCommonsGiven extends Stage<DockerCommonsGiven> {
         return self();
     }
 
-    public DockerCommonsGiven registry_is_started() {
+    public SELF registry_is_started() {
 
         Ports portBinding = new Ports();
         portBinding.bind(ExposedPort.tcp(5000), Ports.Binding(null));

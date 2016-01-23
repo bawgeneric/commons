@@ -1,4 +1,4 @@
-package io.kodokojo.commons.utils.serviceLocator;
+package io.kodokojo.commons.utils.servicelocator;
 
 /*
  * #%L

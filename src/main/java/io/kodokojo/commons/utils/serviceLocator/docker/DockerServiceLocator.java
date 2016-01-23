@@ -1,4 +1,4 @@
-package io.kodokojo.commons.utils.serviceLocator.docker;
+package io.kodokojo.commons.utils.servicelocator.docker;
 
 /*
  * #%L
@@ -27,8 +27,8 @@ import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Filters;
 import io.kodokojo.commons.config.KodokojoConfig;
 import io.kodokojo.commons.utils.docker.DockerSupport;
-import io.kodokojo.commons.utils.serviceLocator.Service;
-import io.kodokojo.commons.utils.serviceLocator.ServiceLocator;
+import io.kodokojo.commons.utils.servicelocator.Service;
+import io.kodokojo.commons.utils.servicelocator.ServiceLocator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +119,7 @@ public class DockerServiceLocator implements ServiceLocator {
         assert labels != null : "labels must be defined";
         labels.add(PROJECT_KEY + "=" + kodokojoConfig.projectName());
         labels.add(STACK_NAME_KEY+ "=" + kodokojoConfig.stackName());
-        labels.add(STACK_TYPY_KEY + "=" + kodokojoConfig.stackType());
+        labels.add(STACK_TYPE_KEY + "=" + kodokojoConfig.stackType());
         Filters filters = new Filters()
                 .withLabels(labels.toArray(new String[]{}));
         if (LOGGER.isDebugEnabled()) {

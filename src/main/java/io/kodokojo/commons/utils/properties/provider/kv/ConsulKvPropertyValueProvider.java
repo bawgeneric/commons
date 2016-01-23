@@ -66,6 +66,7 @@ public class ConsulKvPropertyValueProvider extends AbstarctStringPropertyValuePr
                     res = new String(Base64.getDecoder().decode(value));
                 }
             }
+            //return res != null && res.length() > 2 ? res.substring(1, res.length() - 1) : null;
             return res;
         } catch (RetrofitError e) {
             if ("404 Not Found".equals(e.getMessage())) {

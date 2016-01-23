@@ -126,7 +126,7 @@ public class DockerClientSupport {
     }
 
     public void stopAndRemoveContainer() {
-        boolean remove = !System.getProperty("docker.no.kill.container", "false").equals("true");
+        boolean remove = !System.getProperty("docker.kill.container", "true").equals("false");
         if (remove) {
             containerToClean.forEach(id -> {
                 if (remove) {
@@ -166,11 +166,19 @@ public class DockerClientSupport {
         return remoteDaemonDockerIp;
     }
 
-    public boolean waitUntilHttpRequestRespond(String url, int time) {
-        return waitUntilHttpRequestRespond(url, time, null);
+    public interface ServiceIsUp {
+        boolean accept(Response response);
     }
 
-    public boolean waitUntilHttpRequestRespond(String url, int time, TimeUnit unit) {
+    public boolean waitUntilHttpRequestRespond(String url, int time, ServiceIsUp serviceIsUp) {
+        return waitUntilHttpRequestRespond(url, time, null, serviceIsUp);
+
+    }
+    public boolean waitUntilHttpRequestRespond(String url, int time) {
+        return waitUntilHttpRequestRespond(url, time, null, response -> response.isSuccessful());
+    }
+
+    public boolean waitUntilHttpRequestRespond(String url, int time, TimeUnit unit, ServiceIsUp serviceIsUp) {
         if (isBlank(url)) {
             throw new IllegalArgumentException("url must be defined.");
         }
@@ -188,7 +196,7 @@ public class DockerClientSupport {
         boolean available = false;
         do {
             nbTry++;
-            available = tryRequest(httpUrl, httpClient);
+            available = tryRequest(httpUrl, httpClient, serviceIsUp);
             if (!available) {
                 try {
                     Thread.sleep(20);
@@ -206,16 +214,18 @@ public class DockerClientSupport {
         return available;
     }
 
-    private boolean tryRequest(HttpUrl url, OkHttpClient httpClient) {
+    private boolean tryRequest(HttpUrl url, OkHttpClient httpClient, ServiceIsUp serviceIsUp) {
         Response response = null;
         try {
             Request request = new Request.Builder().url(url).get().build();
             Call call = httpClient.newCall(request);
             response = call.execute();
+            /*
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("try Request {} , get response : {}", url.toString(), response);
             }
-            boolean isSuccesseful = response.isSuccessful();
+            */
+            boolean isSuccesseful = serviceIsUp.accept(response);
             response.body().close();
             return isSuccesseful;
         } catch (IOException e) {
