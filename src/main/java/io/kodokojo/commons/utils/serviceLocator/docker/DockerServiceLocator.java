@@ -42,7 +42,7 @@ public class DockerServiceLocator implements ServiceLocator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerServiceLocator.class);
 
-    public static final String KODOKOJO = "kodokojo-";
+
 
     private final DockerSupport dockerSupport;
 
@@ -72,8 +72,8 @@ public class DockerServiceLocator implements ServiceLocator {
             throw new IllegalArgumentException("name must be defined.");
         }
         List<String> labels = new ArrayList<>(Arrays.asList(
-                KODOKOJO + "componentType=" + type,
-                KODOKOJO + "componentName=" + name)
+                COMPONENT_TYPE_KEY+ "=" + type,
+                COMPONENT_NAME_KEY + "a=" + name)
         );
 
         Set<Service> services = searchServicesWithLabel(labels);
@@ -89,7 +89,7 @@ public class DockerServiceLocator implements ServiceLocator {
         if (isBlank(type)) {
             throw new IllegalArgumentException("type must be defined.");
         }
-        List<String> labels = new ArrayList<>(Arrays.asList(KODOKOJO + "componentType=" + type));
+        List<String> labels = new ArrayList<>(Arrays.asList(COMPONENT_TYPE_KEY + "=" + type));
 
         Set<Service> services = searchServicesWithLabel(labels);
 
@@ -105,7 +105,7 @@ public class DockerServiceLocator implements ServiceLocator {
             throw new IllegalArgumentException("name must be defined.");
         }
 
-        List<String> labels = new ArrayList<>(Arrays.asList(KODOKOJO + "componentName=" + name));
+        List<String> labels = new ArrayList<>(Arrays.asList(COMPONENT_NAME_KEY + "=" + name));
 
         Set<Service> services = searchServicesWithLabel(labels);
 
@@ -117,9 +117,9 @@ public class DockerServiceLocator implements ServiceLocator {
 
     private Set<Service> searchServicesWithLabel(List<String> labels) {
         assert labels != null : "labels must be defined";
-        labels.add(KODOKOJO + "projectName=" + kodokojoConfig.projectName());
-        labels.add(KODOKOJO + "stackName=" + kodokojoConfig.stackName());
-        labels.add(KODOKOJO + "stackType=" + kodokojoConfig.stackType());
+        labels.add(PROJECT_KEY + "=" + kodokojoConfig.projectName());
+        labels.add(STACK_NAME_KEY+ "=" + kodokojoConfig.stackName());
+        labels.add(STACK_TYPY_KEY + "=" + kodokojoConfig.stackType());
         Filters filters = new Filters()
                 .withLabels(labels.toArray(new String[]{}));
         if (LOGGER.isDebugEnabled()) {
@@ -135,7 +135,7 @@ public class DockerServiceLocator implements ServiceLocator {
                 }
                 for (Container.Port port : container.getPorts()) {
                     if (port.getPublicPort() != null && port.getPublicPort() > 0) {
-                        String name = container.getLabels().get(KODOKOJO + "componentName");
+                        String name = container.getLabels().get(KODOKOJO_PREFIXE + "componentName");
                         res.add(new Service(name, dockerSupport.getDockerHost(), port.getPublicPort()));
                     }
                 }

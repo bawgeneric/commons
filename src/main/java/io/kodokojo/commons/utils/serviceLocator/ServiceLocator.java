@@ -26,12 +26,24 @@ import java.util.Set;
 
 public interface ServiceLocator {
 
-    /**
-     * Provide a Kodokojo service for a given type and name
-     * @param type The service type, like registry, scm, ci.
-     * @param name The name of service
-     * @return <code>null</code> if no service found.
-     */
+    public static final String KODOKOJO_PREFIXE = "kodokojo-";
+
+    public static final String PROJECT_KEY = KODOKOJO_PREFIXE + "projectName";
+
+    public static final String STACK_NAME_KEY = KODOKOJO_PREFIXE + "stackName";
+
+    public static final String STACK_TYPY_KEY = KODOKOJO_PREFIXE + "stackType";
+
+    public static final String COMPONENT_NAME_KEY = KODOKOJO_PREFIXE + "componentName";
+
+    public static final String COMPONENT_TYPE_KEY = KODOKOJO_PREFIXE + "componentType";
+
+            /**
+             * Provide a Kodokojo service for a given type and name
+             * @param type The service type, like registry, scm, ci.
+             * @param name The name of service
+             * @return <code>null</code> if no service found.
+             */
     Set<Service> getService(String type, String name);
 
     /**

@@ -23,9 +23,9 @@ package io.kodokojo.commons.docker.fetcher.git;
  */
 
 import io.kodokojo.commons.docker.fetcher.DockerFileSource;
-import io.kodokojo.commons.model.DockerFile;
-import io.kodokojo.commons.model.ImageName;
-import io.kodokojo.commons.model.ImageNameBuilder;
+import io.kodokojo.commons.docker.model.DockerFile;
+import io.kodokojo.commons.docker.model.ImageName;
+import io.kodokojo.commons.docker.model.ImageNameBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;

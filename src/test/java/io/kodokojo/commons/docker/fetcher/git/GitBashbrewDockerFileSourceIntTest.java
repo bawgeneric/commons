@@ -23,7 +23,7 @@ package io.kodokojo.commons.docker.fetcher.git;
  */
 
 import io.kodokojo.commons.docker.fetcher.DockerFileSource;
-import io.kodokojo.commons.model.StringToImageNameConverter;
+import io.kodokojo.commons.docker.model.StringToImageNameConverter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;

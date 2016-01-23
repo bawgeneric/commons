@@ -191,7 +191,7 @@ public class DockerClientSupport {
             available = tryRequest(httpUrl, httpClient);
             if (!available) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(20);
                 } catch (InterruptedException e) {
                     Thread.interrupted();
                     break;
@@ -207,15 +207,27 @@ public class DockerClientSupport {
     }
 
     private boolean tryRequest(HttpUrl url, OkHttpClient httpClient) {
+        Response response = null;
         try {
             Request request = new Request.Builder().url(url).get().build();
             Call call = httpClient.newCall(request);
-            Response response = call.execute();
+            response = call.execute();
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("try Request {} , get response : {}", url.toString(), response);
+            }
             boolean isSuccesseful = response.isSuccessful();
             response.body().close();
             return isSuccesseful;
         } catch (IOException e) {
             return false;
+        } finally {
+            if (response != null) {
+                try {
+                    response.body().close();
+                } catch (IOException e) {
+                    return false;
+                }
+            }
         }
     }
 

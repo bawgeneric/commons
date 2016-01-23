@@ -24,8 +24,8 @@ package io.kodokojo.commons.docker.fetcher;
 
 
 
-import io.kodokojo.commons.model.DockerFile;
-import io.kodokojo.commons.model.DockerFileScmEntry;
+import io.kodokojo.commons.docker.model.DockerFile;
+import io.kodokojo.commons.docker.model.DockerFileScmEntry;
 
 import java.io.File;
 

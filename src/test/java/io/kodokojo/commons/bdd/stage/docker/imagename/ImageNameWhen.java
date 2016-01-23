@@ -25,8 +25,8 @@ package io.kodokojo.commons.bdd.stage.docker.imagename;
 import com.tngtech.jgiven.Stage;
 import com.tngtech.jgiven.annotation.ExpectedScenarioState;
 import com.tngtech.jgiven.annotation.ProvidedScenarioState;
-import io.kodokojo.commons.model.ImageName;
-import io.kodokojo.commons.model.StringToImageNameConverter;
+import io.kodokojo.commons.docker.model.ImageName;
+import io.kodokojo.commons.docker.model.StringToImageNameConverter;
 
 public class ImageNameWhen extends Stage<ImageNameWhen> {
 

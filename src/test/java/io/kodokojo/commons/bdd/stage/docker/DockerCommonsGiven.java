@@ -154,7 +154,7 @@ public class DockerCommonsGiven extends Stage<DockerCommonsGiven> {
 
         String url = dockerClientSupport.getHttpContainerUrl(containerId, 8080) + "/api";
 
-        int timeout = 10000;
+        int timeout = 9000;
         boolean available = dockerClientSupport.waitUntilHttpRequestRespond(url, timeout);
         if (!available) {
             throw new IllegalStateException("Unable to obtain an available Docker image manager after " + timeout);

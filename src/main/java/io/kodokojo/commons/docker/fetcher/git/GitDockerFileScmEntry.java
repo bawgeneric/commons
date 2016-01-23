@@ -23,8 +23,8 @@ package io.kodokojo.commons.docker.fetcher.git;
  */
 
 
-import io.kodokojo.commons.model.ImageName;
-import io.kodokojo.commons.model.DockerFileScmEntry;
+import io.kodokojo.commons.docker.model.ImageName;
+import io.kodokojo.commons.docker.model.DockerFileScmEntry;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 

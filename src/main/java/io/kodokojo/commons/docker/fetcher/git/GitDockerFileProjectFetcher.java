@@ -22,9 +22,9 @@ package io.kodokojo.commons.docker.fetcher.git;
  * #L%
  */
 
-import io.kodokojo.commons.model.DockerFile;
-import io.kodokojo.commons.model.ImageName;
-import io.kodokojo.commons.model.StringToDockerFileConverter;
+import io.kodokojo.commons.docker.model.DockerFile;
+import io.kodokojo.commons.docker.model.ImageName;
+import io.kodokojo.commons.docker.model.StringToDockerFileConverter;
 import io.kodokojo.commons.docker.fetcher.DockerFileProjectFetcher;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.api.Git;
