@@ -64,14 +64,11 @@ public class DockerSupport {
     }
 
     public String getDockerHost() {
-        if (StringUtils.isBlank(dockerConfig.dockerServerUrl())) {
-            try {
-                return InetAddress.getLocalHost().getHostAddress();
-            } catch (UnknownHostException e) {
-                throw new IllegalStateException("Unable to retrive public local host Address.", e);
-            }
+        String dockerServerUrl = dockerConfig.dockerServerUrl();
+        if (StringUtils.isBlank(dockerServerUrl) || "unix:///var/run/docker.sock".equals(dockerServerUrl)) {
+            return "localhost";
         }
-        String host = dockerConfig.dockerServerUrl().replaceAll("^http(s)?://", "").replaceAll(":\\d+$", "");
+        String host = dockerServerUrl.replaceAll("^http(s)?://", "").replaceAll(":\\d+$", "");
 
         return host;
     }

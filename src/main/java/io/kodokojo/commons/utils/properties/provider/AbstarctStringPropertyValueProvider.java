@@ -23,8 +23,7 @@ package io.kodokojo.commons.utils.properties.provider;
  */
 
 
-
-import org.apache.commons.beanutils.converters.StringConverter;
+import java.math.BigDecimal;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -41,8 +40,23 @@ public abstract class AbstarctStringPropertyValueProvider implements PropertyVal
             throw new IllegalArgumentException("key must be defined.");
         }
         String value = provideValue(key);
-        StringConverter converter = new StringConverter();
-        return converter.convert(classType, value);
+        if (value != null) {
+            //StringConverter converter = new StringConverter();
+            if (classType.equals(String.class)) {
+                return (T) value;
+            } else if (classType.equals(Integer.class)) {
+                return (T) Integer.valueOf(value);
+            } else if (classType.equals(Long.class)) {
+                return (T) Long.valueOf(value);
+            } else if (classType.equals(BigDecimal.class)) {
+                return (T) new BigDecimal(value);
+            } else if (classType.equals(Boolean.class)) {
+                return (T) Boolean.valueOf(value);
+            } else {
+                throw new IllegalArgumentException("Unable to convert Property to type '" + classType.getCanonicalName() + "'.");
+            }
+        }
+        return null;
     }
 
 }

@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,10 @@ public class DockerClientSupport {
         PropertyResolver propertyResolver = new PropertyResolver(new DockerConfigValueProvider(new SystemEnvValueProvider()));
         DockerConfig dockerConfig = propertyResolver.createProxy(DockerConfig.class);
         if (StringUtils.isBlank(dockerConfig.dockerServerUrl())) {
+            File dockerSock = new File("/var/run/docker.sock");
+            if (dockerSock.exists()) {
+                return DockerClientConfig.createDefaultConfigBuilder().withUri("unix:///var/run/docker.sock").build();
+            }
             return DockerClientConfig.createDefaultConfigBuilder().build();
         }
         return DockerClientConfig.createDefaultConfigBuilder().withDockerCertPath(dockerConfig.dockerCertPath()).withUri(dockerConfig.dockerServerUrl()).build();

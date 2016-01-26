@@ -60,20 +60,10 @@ public class DockerCommonsGiven <SELF extends DockerCommonsGiven<?>> extends Sta
     DockerClient dockerClient;
 
     @ProvidedScenarioState
-    String containerName;
-
-    @ProvidedScenarioState
-    String containerId;
-
-    @ProvidedScenarioState
-    int registryPort;
-
-    @ProvidedScenarioState
     Map<String, String> containers = new HashMap<>();
 
-    private DockerConfig dockerConfig;
+    protected DockerConfig dockerConfig;
 
-    private boolean dockerManagerLinked = false;
 
     @BeforeScenario
     public void create_a_docker_client() {
@@ -115,71 +105,6 @@ public class DockerCommonsGiven <SELF extends DockerCommonsGiven<?>> extends Sta
         return self();
     }
 
-    public SELF kodokojo_docker_image_manager_is_started() {
-        dockerClientSupport.pullImage("java:8-jre");
-
-        File baseDire = new File("");
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(baseDire.getAbsolutePath()).append(File.separator);
-        stringBuilder.append("src").append(File.separator).append("test").append(File.separator).append("resources");
-        File testResources = new File(stringBuilder.toString());
-        stringBuilder = new StringBuilder(testResources.getAbsolutePath());
-        stringBuilder.append(File.separator).append("int-logback-config.xml");
-        String logbackConfigPath = stringBuilder.toString();
-        File logbakcConfigFile = new File(logbackConfigPath);
-        File targetFile = new File(baseDire.getAbsolutePath() + File.separator + "target");
-        File projectJarFile = FileUtils.listFiles(targetFile, new RegexFileFilter("docker-image-manager-([\\.\\d]*)(-SNAPSHOT)?.jar"), FalseFileFilter.FALSE).stream().findFirst().get();
-
-        Ports portBinding = new Ports();
-        ExposedPort exposedPort = ExposedPort.tcp(8080);
-        portBinding.bind(exposedPort, Ports.Binding(null));
-
-        ArrayList<Bind> bind = new ArrayList<>(Arrays.asList(new Bind(projectJarFile.getAbsolutePath(), new Volume("/project/app.jar")),
-                new Bind(logbakcConfigFile.getAbsolutePath(), new Volume("/project/int-logback-config.xml"))
-        ));
-        Map<String, String> labels = new HashMap<>();
-        String prefix = "kodokojo-";
-        labels.put(prefix + "projectName", "Acme");
-        labels.put(prefix + "stackName", "DevA");
-        labels.put(prefix + "stackType", "Build");
-        labels.put(prefix + "componentType", "dockerImageManager");
-        labels.put(prefix + "componentName", "dockerImageManager");
-        CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd("java:8-jre")
-                .withPortBindings(portBinding)
-                .withExposedPorts(exposedPort)
-                .withLabels(labels)
-                .withWorkingDir("/project")
-                .withCmd("java", "-Dproject.name=Acme", "-Dstack.name=DevA", "-Dstack.type=Build", "-Dlogback.configurationFile=/project/int-logback-config.xml", "-Dgit.bashbrew.url=git://github.com/kodokojo/acme", "-Dgit.bashbrew.library.path=bashbrew/library", "-jar", "/project/app.jar");
-
-        if (dockerConfig != null && StringUtils.isNotBlank(dockerConfig.dockerServerUrl())) {
-            createContainerCmd = createContainerCmd.withEnv("DOCKER_HOST=" + dockerConfig.dockerServerUrl(), "DOCKER_CERT_PATH=" + dockerConfig.dockerCertPath());
-            bind.add(new Bind(dockerConfig.dockerCertPath(), new Volume(dockerConfig.dockerCertPath())));
-        }
-
-        CreateContainerResponse containerResponseId = createContainerCmd.withBinds(bind.toArray(new Bind[0])).exec();
-
-        this.containerId = containerResponseId.getId();
-        containers.put(DOCKER_IMAGE_MANAGER_KEY, containerId);
-        this.containerName = dockerClientSupport.getContainerName(this.containerId);
-        dockerClient.startContainerCmd(containerResponseId.getId()).exec();
-        dockerClientSupport.addContainerIdToClean(containerResponseId.getId());
-
-        String url = dockerClientSupport.getHttpContainerUrl(containerId, 8080) + "/api";
-
-        int timeout = 9000;
-        boolean available = dockerClientSupport.waitUntilHttpRequestRespond(url, timeout);
-        if (!available) {
-            throw new IllegalStateException("Unable to obtain an available Docker image manager after " + timeout);
-        }
-        return self();
-    }
-
-    public SELF registry_send_notification_to_docker_image_manager() {
-        dockerManagerLinked = true;
-        return self();
-    }
-
-
     public SELF $_image_is_started(String imageName, @Hidden int... ports) {
 
         List<PortBinding> portBindings = new ArrayList<>();
@@ -206,39 +131,13 @@ public class DockerCommonsGiven <SELF extends DockerCommonsGiven<?>> extends Sta
         return self();
     }
 
-    public SELF registry_is_started() {
 
-        Ports portBinding = new Ports();
-        portBinding.bind(ExposedPort.tcp(5000), Ports.Binding(null));
 
-        Map<String, String> labels = new HashMap<>();
-        String prefix = "kodokojo-";
-        labels.put(prefix + "projectName", "Acme");
-        labels.put(prefix + "stackName", "DevA");
-        labels.put(prefix + "stackType", "Build");
-        labels.put(prefix + "componentType", "dockerRegistry");
-        labels.put(prefix + "componentName", "registry");
-        CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd("registry:2")
-                .withPortBindings(portBinding)
-                .withLabels(labels);
-        if (dockerManagerLinked) {
-            File f = new File("src/test/resources/config.yml");
-            String configPath = f.getAbsolutePath();
-            createContainerCmd = createContainerCmd.withLinks(new Link(containerId, "dockerimagemanager"))
-                    .withBinds(new Bind(configPath, new Volume("/etc/docker/registry/config.yml")));
-        }
-        CreateContainerResponse registryCmd = createContainerCmd
-                .exec();
-        dockerClientSupport.addContainerIdToClean(registryCmd.getId());
-        dockerClient.startContainerCmd(registryCmd.getId()).exec();
-        InspectContainerResponse inspectContainerResponse = dockerClient.inspectContainerCmd(registryCmd.getId()).exec();
-        Map<ExposedPort, Ports.Binding[]> bindings = inspectContainerResponse.getNetworkSettings().getPorts().getBindings();
-
-        Ports.Binding[] bindingsExposed = bindings.get(ExposedPort.tcp(5000));
-        registryPort = bindingsExposed[0].getHostPort();
-        String url = dockerClientSupport.getHttpContainerUrl(registryCmd.getId(), 5000) + "/v2/";
-        dockerClientSupport.waitUntilHttpRequestRespond(url, 2500);
-        return self();
+    public Map<String, String> getContainers() {
+        return containers;
     }
 
+    public DockerClient getDockerClient() {
+        return dockerClient;
+    }
 }

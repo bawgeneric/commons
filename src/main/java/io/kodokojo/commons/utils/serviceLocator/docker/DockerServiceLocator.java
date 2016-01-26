@@ -42,8 +42,6 @@ public class DockerServiceLocator implements ServiceLocator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerServiceLocator.class);
 
-
-
     private final DockerSupport dockerSupport;
 
     private final DockerClient dockerClient;
