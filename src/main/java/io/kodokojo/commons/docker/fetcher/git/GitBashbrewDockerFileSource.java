@@ -227,7 +227,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
             List<GitDockerFileScmEntry> dockerFileEntries = convertBashbrewFileToDockerfileEntries(libraryFileContent, StringUtils.isBlank(imageName.getTag()) ? null : imageName.getTag(), imageNameBuilder);
             Set<DockerFile> res = addDockerFilesToDockerFileRepository(dockerFileEntries);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("DockerFile {} successfully fetched : {}", imageName.getFullyQualifiedName() ,dockerFileEntries.toString());
+                LOGGER.debug("DockerFile {} successfully fetched with following DockerFile: {}", imageName.getFullyQualifiedName() ,dockerFileEntries.toString());
             }
             return res;
         } catch (IOException e) {
