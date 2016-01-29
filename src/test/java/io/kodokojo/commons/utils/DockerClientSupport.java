@@ -60,8 +60,6 @@ public class DockerClientSupport {
 
     private final boolean dockerIsPresent;
 
-
-
     public DockerClientSupport(DockerClientConfig config) {
         dockerClient = DockerClientBuilder.getInstance(config).build();
         remoteDaemonDockerIp = config.getUri() != null ? config.getUri().getHost() : "127.0.0.1";

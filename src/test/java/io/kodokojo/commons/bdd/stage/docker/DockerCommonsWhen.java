@@ -30,7 +30,6 @@ import io.kodokojo.commons.docker.model.ImageName;
 import io.kodokojo.commons.docker.model.StringToImageNameConverter;
 import org.apache.commons.lang.StringUtils;
 
-//  TODO Move this class in a commons-commons project
 public class DockerCommonsWhen extends Stage<DockerCommonsWhen> {
 
     @ExpectedScenarioState
