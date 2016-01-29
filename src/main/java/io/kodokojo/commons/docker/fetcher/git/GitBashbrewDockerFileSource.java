@@ -59,7 +59,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
 
     private static final String GIT_DIRECTORY = ".git";
 
-    private static final long DEFAULT_BASHBREW_PULL_DELAY = TimeUnit.MILLISECONDS.convert(1,TimeUnit.MINUTES);
+    private static final long DEFAULT_BASHBREW_PULL_DELAY = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
 
     private final File libraryDirectory;
 
@@ -79,7 +79,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
 
     private long lastBashbrewPullDate = 0;
 
-    public GitBashbrewDockerFileSource(String localWorkspace, String defaultUser, String bashbrewGitUrl, String bashbrewGitLibraryPath, GitDockerFileProjectFetcher gitDockerFileProjectFetcher,long delayPeriodBetweenPullBaswbrewGit) {
+    public GitBashbrewDockerFileSource(String localWorkspace, String defaultUser, String bashbrewGitUrl, String bashbrewGitLibraryPath, GitDockerFileProjectFetcher gitDockerFileProjectFetcher, long delayPeriodBetweenPullBaswbrewGit) {
         this.gitDockerFileProjectFetcher = gitDockerFileProjectFetcher;
         if (isBlank(localWorkspace)) {
             throw new IllegalArgumentException("localWorkspace must be defined.");
@@ -136,8 +136,8 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
         libraryDirectory = new File(bashbrewGitDir + File.separator + bashbrewGitLibraryPath);
     }
 
-    public GitBashbrewDockerFileSource(String localWorkspace, String defaultUser, String bashbrewGitUrl, String bashbrewGitLibraryPath,GitDockerFileProjectFetcher gitDockerFileProjectFetcher) {
-        this(localWorkspace, defaultUser, bashbrewGitUrl, bashbrewGitLibraryPath,gitDockerFileProjectFetcher,  DEFAULT_BASHBREW_PULL_DELAY);
+    public GitBashbrewDockerFileSource(String localWorkspace, String defaultUser, String bashbrewGitUrl, String bashbrewGitLibraryPath, GitDockerFileProjectFetcher gitDockerFileProjectFetcher) {
+        this(localWorkspace, defaultUser, bashbrewGitUrl, bashbrewGitLibraryPath, gitDockerFileProjectFetcher, DEFAULT_BASHBREW_PULL_DELAY);
     }
 
     @Override
@@ -164,18 +164,18 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
 
         List<GitDockerFileScmEntry> dockerFileEntries = new ArrayList<>();
 
-        FileUtils.listFilesAndDirs(libraryDirectory, DirectoryFileFilter.DIRECTORY, TrueFileFilter.INSTANCE).forEach(namespace -> {
-            FileUtils.listFiles(namespace, TrueFileFilter.TRUE, null).forEach(name -> {
-                ImageNameBuilder imageNameBuilder = new ImageNameBuilder();
-                imageNameBuilder.setNamespace(namespace.getName()).setName(name.getName());
-                try {
-                    String dockerFileContent = FileUtils.readFileToString(name);
-                    dockerFileEntries.addAll(convertBashbrewFileToDockerfileEntries(dockerFileContent, null, imageNameBuilder));
-                } catch (IOException e) {
-                    LOGGER.error("Unable to read content of file " + name.getAbsolutePath(), e);
-                }
-            });
-        });
+        FileUtils.listFilesAndDirs(libraryDirectory, DirectoryFileFilter.DIRECTORY, TrueFileFilter.INSTANCE)
+                .forEach(namespace -> FileUtils.listFiles(namespace, TrueFileFilter.TRUE, null)
+                        .forEach(name -> {
+                            ImageNameBuilder imageNameBuilder = new ImageNameBuilder();
+                            imageNameBuilder.setNamespace(namespace.getName()).setName(name.getName());
+                            try {
+                                String dockerFileContent = FileUtils.readFileToString(name);
+                                dockerFileEntries.addAll(convertBashbrewFileToDockerfileEntries(dockerFileContent, null, imageNameBuilder));
+                            } catch (IOException e) {
+                                LOGGER.error("Unable to read content of file " + name.getAbsolutePath(), e);
+                            }
+                        }));
 
         Set<DockerFile> res = addDockerFilesToDockerFileRepository(dockerFileEntries);
         return res;
@@ -227,7 +227,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
             List<GitDockerFileScmEntry> dockerFileEntries = convertBashbrewFileToDockerfileEntries(libraryFileContent, StringUtils.isBlank(imageName.getTag()) ? null : imageName.getTag(), imageNameBuilder);
             Set<DockerFile> res = addDockerFilesToDockerFileRepository(dockerFileEntries);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("DockerFile {} successfully fetched with following DockerFile: {}", imageName.getFullyQualifiedName() ,dockerFileEntries.toString());
+                LOGGER.debug("DockerFile {} successfully fetched with following DockerFile: {}", imageName.getFullyQualifiedName(), dockerFileEntries.toString());
             }
             return res;
         } catch (IOException e) {
@@ -261,7 +261,6 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
 
         return res;
     }
-
 
 
     private void pullBashbrewRepository() {

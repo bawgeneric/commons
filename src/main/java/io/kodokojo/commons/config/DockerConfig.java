@@ -37,7 +37,4 @@ public interface DockerConfig extends PropertyConfig {
     @Key("DOCKER_TLS_VERIFY")
     String dockerTlsVerify();
 
-    @Key("docker.registry.url")
-    String dockerRegistryUrl();
-
 }

@@ -87,7 +87,7 @@ public class DockerServiceLocator implements ServiceLocator {
         if (isBlank(type)) {
             throw new IllegalArgumentException("type must be defined.");
         }
-        List<String> labels = new ArrayList<>(Arrays.asList(COMPONENT_TYPE_KEY + "=" + type));
+        List<String> labels = new ArrayList<>(Collections.singletonList(COMPONENT_TYPE_KEY + "=" + type));
 
         Set<Service> services = searchServicesWithLabel(labels);
 
@@ -103,7 +103,7 @@ public class DockerServiceLocator implements ServiceLocator {
             throw new IllegalArgumentException("name must be defined.");
         }
 
-        List<String> labels = new ArrayList<>(Arrays.asList(COMPONENT_NAME_KEY + "=" + name));
+        List<String> labels = new ArrayList<>(Collections.singletonList(COMPONENT_NAME_KEY + "=" + name));
 
         Set<Service> services = searchServicesWithLabel(labels);
 

@@ -178,7 +178,7 @@ public class DockerClientSupport {
 
     }
     public boolean waitUntilHttpRequestRespond(String url, int time) {
-        return waitUntilHttpRequestRespond(url, time, null, response -> response.isSuccessful());
+        return waitUntilHttpRequestRespond(url, time, null, Response::isSuccessful);
     }
 
     public boolean waitUntilHttpRequestRespond(String url, int time, TimeUnit unit, ServiceIsUp serviceIsUp) {
@@ -238,7 +238,7 @@ public class DockerClientSupport {
                 try {
                     response.body().close();
                 } catch (IOException e) {
-                    return false;
+                    LOGGER.warn("Unable to close response.");
                 }
             }
         }

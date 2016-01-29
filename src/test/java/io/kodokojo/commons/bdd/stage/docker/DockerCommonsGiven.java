@@ -25,8 +25,6 @@ package io.kodokojo.commons.bdd.stage.docker;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.InspectContainerResponse;
-import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -37,13 +35,8 @@ import io.kodokojo.commons.config.DockerConfig;
 import io.kodokojo.commons.utils.DockerClientSupport;
 import io.kodokojo.commons.utils.properties.PropertyResolver;
 import io.kodokojo.commons.utils.properties.provider.*;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
 
-import java.io.File;
 import java.util.*;
 
 public class DockerCommonsGiven <SELF extends DockerCommonsGiven<?>> extends Stage<SELF> {
@@ -71,7 +64,7 @@ public class DockerCommonsGiven <SELF extends DockerCommonsGiven<?>> extends Sta
         Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                LinkedList<PropertyValueProvider> propertyValueProviders = new LinkedList<PropertyValueProvider>();
+                LinkedList<PropertyValueProvider> propertyValueProviders = new LinkedList<>();
 
                 propertyValueProviders.add(new SystemPropertyValueProvider());
                 propertyValueProviders.add(new SystemEnvValueProvider());
