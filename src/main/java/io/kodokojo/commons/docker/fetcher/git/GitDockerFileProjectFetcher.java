@@ -122,7 +122,7 @@ public class GitDockerFileProjectFetcher implements DockerFileProjectFetcher<Git
         ImageName imageName = entry.getImageName();
         String pathname = dockerfileGitDir.getAbsolutePath() + File.separator + imageName.getNamespace() + File.separator + imageName.getName();
         File currentDir = new File(pathname);
-        Repository repository = null;
+        Repository repository;
 
         if (!currentDir.exists()) {
             currentDir.mkdirs();
@@ -148,7 +148,9 @@ public class GitDockerFileProjectFetcher implements DockerFileProjectFetcher<Git
                 return null;
             }
         }
-        repository.close();
+        if (repository != null) {
+            repository.close();
+        }
         return currentDir;
     }
 
@@ -162,11 +164,17 @@ public class GitDockerFileProjectFetcher implements DockerFileProjectFetcher<Git
         long lastGitPull = tmpLastGitPull != null ? tmpLastGitPull : 0;
         long timeSinceLastPull = Math.abs(now - lastGitPull);
         if (timeSinceLastPull > delayPeriodBetweenPullDockerFileGit) {
+            Git git = null;
             try {
-                Git.wrap(repository).pull().call();
+                git = Git.wrap(repository);
+                git.pull().call();
                 lastDockerFileGitPullDates.put(imageName, now);
             } catch (GitAPIException e) {
                 LOGGER.error("Unable to pull from " + repository.toString(), e);
+            } finally {
+                if (git != null) {
+                    git.close();
+                }
             }
         } else if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Last pull on Git repository for image {} done to soon, abort the Git pull.", imageName);

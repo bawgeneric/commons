@@ -36,8 +36,6 @@ import javax.inject.Inject;
 
 public class DockerSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DockerSupport.class);
-
     private final DockerConfig dockerConfig;
 
     @Inject
@@ -66,9 +64,8 @@ public class DockerSupport {
         if (StringUtils.isBlank(dockerServerUrl) || "unix:///var/run/docker.sock".equals(dockerServerUrl)) {
             return "localhost";
         }
-        String host = dockerServerUrl.replaceAll("^http(s)?://", "").replaceAll(":\\d+$", "");
 
-        return host;
+        return dockerServerUrl.replaceAll("^http(s)?://", "").replaceAll(":\\d+$", "");
     }
 
 }
