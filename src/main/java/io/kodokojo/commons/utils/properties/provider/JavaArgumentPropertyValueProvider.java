@@ -40,13 +40,9 @@ public class JavaArgumentPropertyValueProvider extends AbstarctStringPropertyVal
 
     private final HashMap<String, String> cache;
 
-    private final String prefixe;
-
     public JavaArgumentPropertyValueProvider(String prefixe, String[] args) {
         if (isBlank(prefixe)) {
-            this.prefixe = DEFAULT_PREFIX;
-        } else {
-            this.prefixe = prefixe;
+            prefixe = DEFAULT_PREFIX;
         }
         if (args == null) {
             throw new IllegalArgumentException(" must be defined.");

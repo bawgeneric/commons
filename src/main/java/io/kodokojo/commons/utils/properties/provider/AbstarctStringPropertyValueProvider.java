@@ -41,7 +41,6 @@ public abstract class AbstarctStringPropertyValueProvider implements PropertyVal
         }
         String value = provideValue(key);
         if (value != null) {
-            //StringConverter converter = new StringConverter();
             if (classType.equals(String.class)) {
                 return (T) value;
             } else if (classType.equals(Integer.class)) {

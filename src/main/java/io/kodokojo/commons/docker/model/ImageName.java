@@ -89,10 +89,6 @@ public class ImageName {
 
     }
 
-    public boolean isRootImage() {
-        return DEFAULT_NAMESPACE.equals(namespace);
-    }
-
     public ImageName(String namespace, String name, List<String> tags) {
         this(null, namespace, name, tags);
     }
@@ -107,6 +103,10 @@ public class ImageName {
 
     public boolean isFullyQualified() {
         return StringUtils.isNotBlank(tag);
+    }
+
+    public boolean isRootImage() {
+        return DEFAULT_NAMESPACE.equals(namespace);
     }
 
     public String getFullyQualifiedName() {
