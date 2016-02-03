@@ -237,7 +237,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
         }
     }
 
-    private List<GitDockerFileScmEntry> convertBashbrewFileToDockerfileEntries(String libraryFileContent, String tag, ImageNameBuilder imageNameBuilder) {
+    private static List<GitDockerFileScmEntry> convertBashbrewFileToDockerfileEntries(String libraryFileContent, String tag, ImageNameBuilder imageNameBuilder) {
         assert StringUtils.isNotBlank(libraryFileContent) : "libraryFileContent must be define.";
         List<GitDockerFileScmEntry> res = new ArrayList<>();
 

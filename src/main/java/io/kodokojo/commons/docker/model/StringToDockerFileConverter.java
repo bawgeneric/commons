@@ -44,6 +44,10 @@ public class StringToDockerFileConverter  {
 
     private static final Pattern MAINTAINER_PATTERN = Pattern.compile("^MAINTAINER (.*)$");
 
+    private StringToDockerFileConverter() {
+        //  Util class.
+    }
+
     public static DockerFile convertToDockerFile(ImageName imageName, String content) {
         if (imageName == null) {
             throw new IllegalArgumentException("imageName must be defined.");
@@ -72,8 +76,7 @@ public class StringToDockerFileConverter  {
             }
         }
         ImageName fromImageName = StringUtils.isNotBlank(from) ? StringToImageNameConverter.convert(from) : null;
-        DockerFile res = new DockerFile(imageName, fromImageName, maintainer);
-        return res;
+        return new DockerFile(imageName, fromImageName, maintainer);
     }
 
 }

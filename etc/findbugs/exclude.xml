@@ -1,0 +1,5 @@
+<FindBugsFilter>
+    <Match>
+        <Package name="~io\.kodokojo\.commons\.utils\..*" />
+    </Match>
+</FindBugsFilter>

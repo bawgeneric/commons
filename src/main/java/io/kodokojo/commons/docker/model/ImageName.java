@@ -98,7 +98,7 @@ public class ImageName {
     }
 
     public ImageName(String namespace, String name) {
-        this(namespace, name, Collections.EMPTY_LIST);
+        this(namespace, name, Collections.emptyList());
     }
 
     public ImageName(String name) {

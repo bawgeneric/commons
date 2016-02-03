@@ -183,7 +183,7 @@ public class GitDockerFileProjectFetcher implements DockerFileProjectFetcher<Git
     }
 
     //Source : https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/api/ReadFileFromCommit.java
-    private String getFileContent(Repository repository, GitDockerFileScmEntry entry) {
+    private static String getFileContent(Repository repository, GitDockerFileScmEntry entry) {
 
         String res = null;
         try (RevWalk revWalk = new RevWalk(repository)) {

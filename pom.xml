@@ -331,7 +331,13 @@
                         <exclude>io/kodokojo/commons/docker/model/Docker*.class</exclude>
                         <exclude>io/kodokojo/commons/docker/model/Image*.class</exclude>
                         <exclude>io/kodokojo/commons/utils/*.class</exclude>
+                        <exclude>io/kodokojo/commons/docker/fetcher/git/GitDockerFileScmEntry.class</exclude>
                         <exclude>io/kodokojo/commons/**/*Test.class</exclude>
+                        <exclude>io/kodokojo/commons/**/*Given.class</exclude>
+                        <exclude>io/kodokojo/commons/**/*Then.class</exclude>
+                        <exclude>io/kodokojo/commons/**/*When.class</exclude>
+                        <exclude>io/kodokojo/commons/bdd/RetrofitEntrypointSupport.class</exclude>
+                        <exclude>io/kodokojo/commons/utils/DockerClientSupport.class</exclude>
                     </excludes>
                 </configuration>
 
@@ -371,6 +377,27 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <failOnError>false</failOnError>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>analyze-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -397,6 +424,10 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.3</version>
+                <configuration>
+                    <onlyAnalyze>io.kodokojo.commons.*</onlyAnalyze>
+                    <excludeFilterFile>${project.basedir}/etc/findbugs/exclude.xml</excludeFilterFile>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
