@@ -23,14 +23,11 @@ package io.kodokojo.commons.utils.docker;
  */
 
 
-
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import io.kodokojo.commons.config.DockerConfig;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -47,7 +44,7 @@ public class DockerSupport {
     }
 
     public DockerClient createDockerClient() {
-        DockerClientConfig config = null;
+        DockerClientConfig config;
         if (StringUtils.isBlank(dockerConfig.dockerServerUrl())) {
             config = DockerClientConfig.createDefaultConfigBuilder().build();
         } else {

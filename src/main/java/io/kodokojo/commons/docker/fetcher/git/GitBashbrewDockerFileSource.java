@@ -67,8 +67,6 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
 
     private final GitDockerFileProjectFetcher gitDockerFileProjectFetcher;
 
-    private final String defaultUser;
-
     private final long delayPeriodBetweenPullBaswbrewGit;
 
     private final Map<ImageName, GitDockerFileScmEntry> dockerFileScmEntrys;
@@ -79,7 +77,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
 
     private long lastBashbrewPullDate = 0;
 
-    public GitBashbrewDockerFileSource(String localWorkspace, String defaultUser, String bashbrewGitUrl, String bashbrewGitLibraryPath, GitDockerFileProjectFetcher gitDockerFileProjectFetcher, long delayPeriodBetweenPullBaswbrewGit) {
+    public GitBashbrewDockerFileSource(String localWorkspace, String bashbrewGitUrl, String bashbrewGitLibraryPath, GitDockerFileProjectFetcher gitDockerFileProjectFetcher, long delayPeriodBetweenPullBaswbrewGit) {
         this.gitDockerFileProjectFetcher = gitDockerFileProjectFetcher;
         if (isBlank(localWorkspace)) {
             throw new IllegalArgumentException("localWorkspace must be defined.");
@@ -87,7 +85,6 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
         if (gitDockerFileProjectFetcher == null) {
             throw new IllegalArgumentException("gitDockerFileProjectFetcher must be defined.");
         }
-        this.defaultUser = defaultUser;
         this.delayPeriodBetweenPullBaswbrewGit = delayPeriodBetweenPullBaswbrewGit;
         this.dockerFileScmEntrys = new HashMap<>();
         ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -96,11 +93,13 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
 
         File workspace = new File(localWorkspace);
         if (!workspace.exists()) {
-            workspace.mkdirs();
+            boolean workspaceCreated = workspace.mkdirs();
+            if(LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Workspace {} {}.", workspace.getAbsolutePath(), workspaceCreated ? "created": "NOT created");
+            }
         }
-        if (workspace.isDirectory() && workspace.canRead() && workspace.canWrite()) {
-        } else {
-            throw new IllegalArgumentException("Unable to read or write in directory " + localWorkspace);
+        if (!workspace.isDirectory() || !workspace.canWrite()) {
+            throw new IllegalArgumentException("Unable to write in directory " + localWorkspace);
         }
 
         if (isBlank(bashbrewGitUrl)) {
@@ -124,7 +123,10 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
             }
 
         } else {
-            bashbrewGitDir.mkdirs();
+            boolean bashbrewGitDirCreated = bashbrewGitDir.mkdirs();
+            if(LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Bashbrew work dir {} {}.", workspace.getAbsolutePath(), bashbrewGitDirCreated ? "created": "NOT created");
+            }
 
             try {
                 git = Git.cloneRepository().setURI(bashbrewGitUrl).setDirectory(bashbrewGitDir).call();
@@ -136,8 +138,8 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
         libraryDirectory = new File(bashbrewGitDir + File.separator + bashbrewGitLibraryPath);
     }
 
-    public GitBashbrewDockerFileSource(String localWorkspace, String defaultUser, String bashbrewGitUrl, String bashbrewGitLibraryPath, GitDockerFileProjectFetcher gitDockerFileProjectFetcher) {
-        this(localWorkspace, defaultUser, bashbrewGitUrl, bashbrewGitLibraryPath, gitDockerFileProjectFetcher, DEFAULT_BASHBREW_PULL_DELAY);
+    public GitBashbrewDockerFileSource(String localWorkspace, String bashbrewGitUrl, String bashbrewGitLibraryPath, GitDockerFileProjectFetcher gitDockerFileProjectFetcher) {
+        this(localWorkspace, bashbrewGitUrl, bashbrewGitLibraryPath, gitDockerFileProjectFetcher, DEFAULT_BASHBREW_PULL_DELAY);
     }
 
     @Override
@@ -177,8 +179,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
                             }
                         }));
 
-        Set<DockerFile> res = addDockerFilesToDockerFileRepository(dockerFileEntries);
-        return res;
+        return addDockerFilesToDockerFileRepository(dockerFileEntries);
     }
 
     private Set<DockerFile> addDockerFilesToDockerFileRepository(List<GitDockerFileScmEntry> dockerFileEntries) {
@@ -232,7 +233,7 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
             return res;
         } catch (IOException e) {
             LOGGER.error("Unable to read content of file " + libraryFile.getAbsolutePath(), e);
-            return null;
+            return Collections.emptySet();
         }
     }
 
@@ -249,10 +250,6 @@ public class GitBashbrewDockerFileSource implements DockerFileSource<GitDockerFi
                 if (StringUtils.isBlank(tag) || tag.equals(currentTag)) {
                     ImageName imageName = imageNameBuilder.setTag(currentTag).build();
                     String gitUrl = matcher.group(2);
-                    //TODO Check url schemas to add this user only if it ssh connection only or remove this pattern
-                    if (StringUtils.isNotBlank(defaultUser) && !gitUrl.contains("@")) {
-                        gitUrl = defaultUser + "@" + gitUrl;
-                    }
                     GitDockerFileScmEntry entry = new GitDockerFileScmEntry(imageName, gitUrl, matcher.group(3), matcher.group(4));
                     res.add(entry);
                 }

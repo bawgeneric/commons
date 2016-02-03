@@ -68,11 +68,11 @@ public class StringToImageNameConverter implements Function<String, ImageName> {
 
             return listener.getImageName();
         } catch (RecognitionException e) {
-            LOGGER.debug("Unable to parse following image name '{}'", input);
+            LOGGER.debug("Unable to parse following image name '{}' : {}", input , e);
             return null;
         } catch (RuntimeException e ) {
 
-            LOGGER.debug("Unable to parse following image name '{}'", input);
+            LOGGER.debug("Unable to parse following image name '{}' : {}", input, e);
             return null;
         }
     }

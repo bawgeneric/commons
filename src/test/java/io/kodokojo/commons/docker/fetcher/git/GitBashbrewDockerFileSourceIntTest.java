@@ -47,7 +47,7 @@ public class GitBashbrewDockerFileSourceIntTest {
         String libraryPath = "bashbrew/library";
         File workspace = tmpFolder.newFolder();
         GitDockerFileProjectFetcher gitDockerFileProjectFetcher = new GitDockerFileProjectFetcher(workspace.getAbsolutePath());
-        DockerFileSource dockerFileSource = new GitBashbrewDockerFileSource(workspace.getAbsolutePath(), null, gitUrl, libraryPath, gitDockerFileProjectFetcher);
+        DockerFileSource dockerFileSource = new GitBashbrewDockerFileSource(workspace.getAbsolutePath(), gitUrl, libraryPath, gitDockerFileProjectFetcher);
 
         Set res = dockerFileSource.fetchDockerFile(StringToImageNameConverter.convert("kodokojo/busybox"));
 
@@ -59,7 +59,7 @@ public class GitBashbrewDockerFileSourceIntTest {
         String libraryPath = "bashbrew/library";
         File workspace = tmpFolder.newFolder();
         GitDockerFileProjectFetcher gitDockerFileProjectFetcher = new GitDockerFileProjectFetcher(workspace.getAbsolutePath());
-        DockerFileSource dockerFileSource = new GitBashbrewDockerFileSource(workspace.getAbsolutePath(), null, gitUrl, libraryPath, gitDockerFileProjectFetcher);
+        DockerFileSource dockerFileSource = new GitBashbrewDockerFileSource(workspace.getAbsolutePath(), gitUrl, libraryPath, gitDockerFileProjectFetcher);
 
         Set res = dockerFileSource.fetchDockerFile(StringToImageNameConverter.convert("kodokojo/busybox:1.0.0"));
 
@@ -72,7 +72,7 @@ public class GitBashbrewDockerFileSourceIntTest {
 
         File workspace = tmpFolder.newFolder();
         GitDockerFileProjectFetcher gitDockerFileProjectFetcher = new GitDockerFileProjectFetcher(workspace.getAbsolutePath());
-        DockerFileSource dockerFileSource = new GitBashbrewDockerFileSource(workspace.getAbsolutePath(), null, gitUrl, libraryPath, gitDockerFileProjectFetcher);
+        DockerFileSource dockerFileSource = new GitBashbrewDockerFileSource(workspace.getAbsolutePath(), gitUrl, libraryPath, gitDockerFileProjectFetcher);
 
         Set res = dockerFileSource.fetchAllDockerFile();
 
