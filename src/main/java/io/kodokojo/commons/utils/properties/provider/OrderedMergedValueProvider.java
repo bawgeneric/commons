@@ -25,12 +25,13 @@ package io.kodokojo.commons.utils.properties.provider;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class OrderedMergedValueProvider implements PropertyValueProvider {
 
-    private final LinkedList<PropertyValueProvider> propertyValueProviders;
+    private final List<PropertyValueProvider> propertyValueProviders;
 
     public OrderedMergedValueProvider(LinkedList<PropertyValueProvider> propertyValueProviders) {
         if (propertyValueProviders == null) {

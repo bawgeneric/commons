@@ -40,9 +40,10 @@ public class JavaArgumentPropertyValueProvider extends AbstarctStringPropertyVal
 
     private final HashMap<String, String> cache;
 
-    public JavaArgumentPropertyValueProvider(String prefixe, String[] args) {
-        if (isBlank(prefixe)) {
-            prefixe = DEFAULT_PREFIX;
+    public JavaArgumentPropertyValueProvider(String prefixParam, String[] args) {
+        String prefix = prefixParam;
+        if (isBlank(prefixParam)) {
+            prefix = DEFAULT_PREFIX;
         }
         if (args == null) {
             throw new IllegalArgumentException(" must be defined.");
@@ -50,11 +51,11 @@ public class JavaArgumentPropertyValueProvider extends AbstarctStringPropertyVal
         cache = new HashMap<>();
         String currentKey = null;
         for(String arg : args) {
-            if (arg.startsWith(prefixe)) {
+            if (arg.startsWith(prefix)) {
                 if (StringUtils.isNotBlank(currentKey)) {
                     cache.put(currentKey,Boolean.TRUE.toString());
                 }
-                currentKey = arg.substring(prefixe.length());
+                currentKey = arg.substring(prefix.length());
             } else {
                 if (StringUtils.isNotBlank(currentKey)) {
                     cache.put(currentKey, arg);

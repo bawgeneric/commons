@@ -51,7 +51,7 @@ public interface ServiceLocator {
      * Provide a Kodokojo service gor a give type;
      *
      * @param type The name of service
-     * @return <code>null</code> if no service found.
+     * @return Empty collections if no service found.
      */
     Set<Service> getServiceByType(String type);
 
@@ -59,7 +59,7 @@ public interface ServiceLocator {
      * Provide a Kodokojo service gor a give name;
      *
      * @param name The name of service
-     * @return <code>null</code> if no service found.
+     * @return Empty collections if no service found.
      */
     Set<Service> getServiceByName(String name);
 

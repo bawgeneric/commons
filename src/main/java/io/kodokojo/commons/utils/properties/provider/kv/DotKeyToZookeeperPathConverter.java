@@ -26,13 +26,14 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class DotKeyToZookeeperPathConverter implements KeyToZookeeperPathConverter {
     @Override
-    public String convert(String key) {
-        if (isBlank(key)) {
+    public String convert(String keyParam) {
+        if (isBlank(keyParam)) {
             throw new IllegalArgumentException("key must be defined.");
         }
+        String key = keyParam;
         if (!key.startsWith("/")) {
             key = "/" + key;
         }
-        return key.replaceAll(".","/");
+        return key.replaceAll("\\.","/");
     }
 }

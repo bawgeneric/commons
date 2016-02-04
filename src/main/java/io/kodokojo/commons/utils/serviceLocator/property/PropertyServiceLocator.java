@@ -51,12 +51,12 @@ public class PropertyServiceLocator implements ServiceLocator {
 
     @Override
     public Set<Service> getService(String type, String name) {
-        return null;
+        return Collections.emptySet();
     }
 
     @Override
     public Set<Service> getServiceByType(String type) {
-        return null;
+        return Collections.emptySet();
     }
 
     @Override
@@ -75,6 +75,6 @@ public class PropertyServiceLocator implements ServiceLocator {
             return Collections.singleton(service);
         }
 
-        return null;
+        return Collections.emptySet();
     }
 }

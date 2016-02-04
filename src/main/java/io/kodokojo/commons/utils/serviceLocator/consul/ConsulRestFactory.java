@@ -28,6 +28,10 @@ import retrofit.converter.GsonConverter;
 
 public class ConsulRestFactory {
 
+    private ConsulRestFactory() {
+        // Util class.
+    }
+
     public static ConsulRest build(String baseUrl, Gson gson) {
         if (baseUrl == null) {
             throw new IllegalArgumentException("baseUrl must be defined.");
@@ -35,9 +39,8 @@ public class ConsulRestFactory {
         if (gson == null) {
             throw new IllegalArgumentException("gson must be defined.");
         }
-        RestAdapter restAdater = new RestAdapter.Builder().setEndpoint(baseUrl).setConverter(new GsonConverter(gson)).build();
-        ConsulRest consulRest = restAdater.create(ConsulRest.class);
-        return consulRest;
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(baseUrl).setConverter(new GsonConverter(gson)).build();
+        return restAdapter.create(ConsulRest.class);
     }
 
 
