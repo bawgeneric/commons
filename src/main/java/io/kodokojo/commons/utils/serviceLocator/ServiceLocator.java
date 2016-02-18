@@ -22,6 +22,9 @@ package io.kodokojo.commons.utils.servicelocator;
  * #L%
  */
 
+
+import io.kodokojo.commons.project.model.Service;
+
 import java.util.Set;
 
 public interface ServiceLocator {

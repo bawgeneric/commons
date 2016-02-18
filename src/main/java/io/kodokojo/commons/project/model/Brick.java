@@ -1,8 +1,8 @@
-package io.kodokojo.commons.utils.servicelocator;
+package io.kodokojo.commons.project.model;
 
 /*
  * #%L
- * commons-commons
+ * kodokojo-commons
  * %%
  * Copyright (C) 2016 Kodo-kojo
  * %%
@@ -24,47 +24,47 @@ package io.kodokojo.commons.utils.servicelocator;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-public class Service {
+public enum Brick {
+
+    JENKINS("jenkins", BrickType.CI),
+    GITLAB("gitlab", BrickType.SCM),
+    SONAR("sonar", BrickType.QA),
+    DOCKER_REGISTRY("registry", BrickType.REPOSITORY),
+    NEXUS("nexus", BrickType.REPOSITORY),
+    LDAP("ldap", BrickType.AUTHENTIFICATOR),
+    OAUTH("oauth", BrickType.AUTHENTIFICATOR),
+    FLAPJACK("flapjack", BrickType.ALTERTING),
+    SENSUK("sensu", BrickType.MONITORING),
+    HAPROXY("haproxy", BrickType.LOADBALANCER);
 
     private final String name;
 
-    private final String host;
+    private final BrickType type;
 
-    private final int port;
-
-    public Service(String name, String host, int port) {
+    Brick(String name, BrickType type) {
         if (isBlank(name)) {
             throw new IllegalArgumentException("name must be defined.");
         }
-        if (isBlank(host)) {
-            throw new IllegalArgumentException("host must be defined.");
-        }
-        if (port <= 0) {
-            throw new IllegalArgumentException("port must be upper than 0");
+        if (type == null) {
+            throw new IllegalArgumentException("type must be defined.");
         }
         this.name = name;
-        this.host = host;
-        this.port = port;
+        this.type = type;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
+    public BrickType getType() {
+        return type;
     }
 
     @Override
     public String toString() {
-        return "Service{" +
+        return "Brick{" +
                 "name='" + name + '\'' +
-                ", host='" + host + '\'' +
-                ", port=" + port +
+                ", type=" + type +
                 '}';
     }
 }

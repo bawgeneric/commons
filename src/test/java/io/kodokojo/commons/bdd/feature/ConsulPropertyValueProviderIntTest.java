@@ -30,13 +30,14 @@ import io.kodokojo.commons.bdd.Consul;
 import io.kodokojo.commons.bdd.stage.docker.consul.PropertyValueConsulGiven;
 import io.kodokojo.commons.bdd.stage.docker.consul.PropertyValueConsulThen;
 import io.kodokojo.commons.bdd.stage.docker.consul.PropertyValueConsulWhen;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+@Ignore
 @As("Consul PropertyValueProvider")
 @Consul
 public class ConsulPropertyValueProviderIntTest extends ScenarioTest<PropertyValueConsulGiven<?>, PropertyValueConsulWhen<?>, PropertyValueConsulThen<?>> {
-
 
     @Rule
     public DockerPresentMethodRule dockerPresentMethodRule = new DockerPresentMethodRule();

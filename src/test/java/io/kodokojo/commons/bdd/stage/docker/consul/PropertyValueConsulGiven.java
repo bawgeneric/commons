@@ -22,14 +22,26 @@ package io.kodokojo.commons.bdd.stage.docker.consul;
  * #L%
  */
 
+import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.Ports;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.squareup.okhttp.*;
+import com.tngtech.jgiven.Stage;
+import com.tngtech.jgiven.annotation.BeforeScenario;
 import com.tngtech.jgiven.annotation.ProvidedScenarioState;
 import com.tngtech.jgiven.annotation.Quoted;
-import io.kodokojo.commons.bdd.stage.docker.DockerCommonsGiven;
+import io.kodokojo.commons.config.DockerConfig;
+import io.kodokojo.commons.utils.DockerTestSupport;
+import io.kodokojo.commons.utils.docker.DockerSupport;
+import io.kodokojo.commons.utils.properties.PropertyResolver;
+import io.kodokojo.commons.utils.properties.provider.*;
 import io.kodokojo.commons.utils.properties.provider.kv.ConsulKvPropertyValueProvider;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit.http.Body;
@@ -37,11 +49,17 @@ import retrofit.http.Path;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
-public class PropertyValueConsulGiven<SELF extends PropertyValueConsulGiven<?>> extends DockerCommonsGiven<SELF> {
+public class PropertyValueConsulGiven<SELF extends PropertyValueConsulGiven<?>> extends Stage<SELF> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyValueConsulGiven.class);
+
+    @Rule
+    @ProvidedScenarioState
+    public DockerTestSupport dockerClientSupport = new DockerTestSupport();
+
 
     @ProvidedScenarioState
     String consulContainerId;
@@ -50,6 +68,12 @@ public class PropertyValueConsulGiven<SELF extends PropertyValueConsulGiven<?>> 
     ConsulKvPropertyValueProvider consulKvPropertyValueProvider;
 
     private final Map<String, HttpConulKeyValueRest> consulKvRest = new HashMap<>();
+
+    private DockerClient dockerClient;
+
+    private DockerConfig dockerConfig;
+
+    private DockerSupport dockerSupport;
 
     public SELF consul_kv_value_provider_exist() {
         if (consulKvPropertyValueProvider == null) {
@@ -79,7 +103,7 @@ public class PropertyValueConsulGiven<SELF extends PropertyValueConsulGiven<?>> 
         HttpConulKeyValueRest consulKeyValueRest = new HttpConulKeyValueRest(containerUrl);
         consulKvRest.put(consulContainerId, consulKeyValueRest);
 
-        this.dockerClientSupport.waitUntilHttpRequestRespond(containerUrl + "/v1/status/leader", 5000, response -> {
+        this.dockerSupport.waitUntilHttpRequestRespond(containerUrl + "/v1/status/leader", 5000, response -> {
             try {
                 return response.body().string().contains(".");
             } catch (IOException e) {
@@ -93,6 +117,32 @@ public class PropertyValueConsulGiven<SELF extends PropertyValueConsulGiven<?>> 
         HttpConulKeyValueRest consulKeyValueRest = consulKvRest.get(consulContainerId);
         consulKeyValueRest.addKey(key, value);
         return self();
+    }
+
+    @BeforeScenario
+    public void create_a_docker_client() {
+        dockerClient = dockerClientSupport.getDockerClient();
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                PropertyResolver resolver = new PropertyResolver(new DockerConfigValueProvider(new SystemEnvValueProvider()));
+                bind(DockerConfig.class).toInstance(resolver.createProxy(DockerConfig.class));
+            }
+        });
+        dockerConfig = injector.getInstance(DockerConfig.class);
+        dockerSupport = new DockerSupport(dockerConfig);
+    }
+
+
+    protected String startContainer(CreateContainerCmd createContainerCmd, String name) {
+        if (createContainerCmd == null) {
+            throw new IllegalArgumentException("createContainerCmd must be defined.");
+        }
+        CreateContainerResponse response = createContainerCmd.exec();
+
+        dockerClient.startContainerCmd(response.getId()).exec();
+        dockerClientSupport.addContainerIdToClean(response.getId());
+        return response.getId();
     }
 
     private class HttpConulKeyValueRest {

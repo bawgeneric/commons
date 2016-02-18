@@ -1,8 +1,8 @@
-package io.kodokojo.commons.bdd;
+package io.kodokojo.commons.project.model;
 
 /*
  * #%L
- * docker-commons
+ * kodokojo-commons
  * %%
  * Copyright (C) 2016 Kodo-kojo
  * %%
@@ -22,6 +22,7 @@ package io.kodokojo.commons.bdd;
  * #L%
  */
 
-public interface RetrofitEntrypointCallback<T> {
-    T execute();
+public enum StackType {
+    BUILD,
+    RUN
 }

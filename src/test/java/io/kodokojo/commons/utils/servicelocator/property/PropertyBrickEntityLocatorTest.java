@@ -22,16 +22,17 @@ package io.kodokojo.commons.utils.servicelocator.property;
  * #L%
  */
 
+import io.kodokojo.commons.project.model.Service;
 import io.kodokojo.commons.utils.properties.provider.JavaArgumentPropertyValueProvider;
 import io.kodokojo.commons.utils.properties.provider.PropertyValueProvider;
-import io.kodokojo.commons.utils.servicelocator.Service;
+
 import org.junit.Test;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PropertyServiceLocatorTest {
+public class PropertyBrickEntityLocatorTest {
 
 
     @Test

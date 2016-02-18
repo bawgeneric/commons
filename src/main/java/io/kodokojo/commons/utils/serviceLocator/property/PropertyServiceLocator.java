@@ -22,8 +22,8 @@ package io.kodokojo.commons.utils.servicelocator.property;
  * #L%
  */
 
+import io.kodokojo.commons.project.model.Service;
 import io.kodokojo.commons.utils.properties.provider.PropertyValueProvider;
-import io.kodokojo.commons.utils.servicelocator.Service;
 import io.kodokojo.commons.utils.servicelocator.ServiceLocator;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class PropertyServiceLocator implements ServiceLocator {
         if (StringUtils.isNotBlank(host) && port > 0) {
             Service service = new Service(name, host, port);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Service name '{} found under PropertyProvider : {}", name, service);
+                LOGGER.debug("BrickEntity name '{} found under PropertyProvider : {}", name, service);
             }
             return Collections.singleton(service);
         }

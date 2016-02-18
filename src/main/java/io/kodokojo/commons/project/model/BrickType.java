@@ -1,8 +1,8 @@
-package io.kodokojo.commons;
+package io.kodokojo.commons.project.model;
 
 /*
  * #%L
- * commons-image-manager
+ * kodokojo-commons
  * %%
  * Copyright (C) 2016 Kodo-kojo
  * %%
@@ -22,10 +22,31 @@ package io.kodokojo.commons;
  * #L%
  */
 
-import java.lang.annotation.*;
+public enum BrickType {
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DockerIsRequire {
-    /* Tagging interface */
+    SCM(true, StackType.BUILD),
+    QA(false, StackType.BUILD),
+    CI(true, StackType.BUILD),
+    REPOSITORY(true, StackType.BUILD),
+    MONITORING(false, StackType.RUN),
+    ALTERTING(false, StackType.RUN),
+    AUTHENTIFICATOR(true, StackType.RUN),
+    LOADBALANCER(false, StackType.RUN);
+
+    private final boolean requiered;
+
+    private final StackType stackType;
+
+    BrickType(boolean requiered, StackType stackType) {
+        this.requiered = requiered;
+        this.stackType = stackType;
+    }
+
+    public boolean isRequiered() {
+        return requiered;
+    }
+
+    public StackType getStackType() {
+        return stackType;
+    }
 }

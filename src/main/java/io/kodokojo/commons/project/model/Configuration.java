@@ -1,11 +1,8 @@
-/**
- *Tool set which allow to locate a {@link io.kodokojo.commons.model.Service} .
- */
-package io.kodokojo.commons.utils.servicelocator;
+package io.kodokojo.commons.project.model;
 
 /*
  * #%L
- * docker-commons
+ * kodokojo-commons
  * %%
  * Copyright (C) 2016 Kodo-kojo
  * %%
@@ -24,3 +21,17 @@ package io.kodokojo.commons.utils.servicelocator;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
+import java.util.Date;
+
+public interface Configuration {
+
+    String getVersion();
+
+    void setVersion(String version);
+
+    Date getVersionDate();
+
+    void setVersionDate(Date versionDate);
+
+}

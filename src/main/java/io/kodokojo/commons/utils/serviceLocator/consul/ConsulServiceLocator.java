@@ -24,7 +24,7 @@ package io.kodokojo.commons.utils.servicelocator.consul;
 
 import com.google.gson.*;
 import io.kodokojo.commons.config.KodokojoConfig;
-import io.kodokojo.commons.utils.servicelocator.Service;
+import io.kodokojo.commons.project.model.Service;
 import io.kodokojo.commons.utils.servicelocator.ServiceLocator;
 
 import java.util.*;

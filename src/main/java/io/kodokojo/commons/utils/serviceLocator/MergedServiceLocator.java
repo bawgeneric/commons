@@ -22,6 +22,7 @@ package io.kodokojo.commons.utils.servicelocator;
  * #L%
  */
 
+import io.kodokojo.commons.project.model.Service;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.HashSet;
@@ -68,7 +69,7 @@ public class MergedServiceLocator implements ServiceLocator {
         return callAllServiceLocators((serviceLocator) -> serviceLocator.getServiceByName(name));
     }
 
-    private Set<Service> callAllServiceLocators( Callback callback) {
+    private Set<Service> callAllServiceLocators(Callback callback) {
         Set<Service> res = new HashSet<>();
         for (ServiceLocator serviceLocator : serviceLocators) {
             Set<Service> service = callback.execute(serviceLocator);
