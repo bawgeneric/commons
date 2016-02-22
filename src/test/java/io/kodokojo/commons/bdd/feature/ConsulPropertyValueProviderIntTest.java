@@ -34,7 +34,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Ignore
+
 @As("Consul PropertyValueProvider")
 @Consul
 public class ConsulPropertyValueProviderIntTest extends ScenarioTest<PropertyValueConsulGiven<?>, PropertyValueConsulWhen<?>, PropertyValueConsulThen<?>> {

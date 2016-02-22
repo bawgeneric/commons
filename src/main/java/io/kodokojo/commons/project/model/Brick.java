@@ -34,7 +34,7 @@ public enum Brick {
     LDAP("ldap", BrickType.AUTHENTIFICATOR),
     OAUTH("oauth", BrickType.AUTHENTIFICATOR),
     FLAPJACK("flapjack", BrickType.ALTERTING),
-    SENSUK("sensu", BrickType.MONITORING),
+    SENSU("sensu", BrickType.MONITORING),
     HAPROXY("haproxy", BrickType.LOADBALANCER);
 
     private final String name;

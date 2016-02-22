@@ -40,7 +40,7 @@ public class BrickEntity {
         if (brick == null) {
             throw new IllegalArgumentException("brick must be defined.");
         }
-        if (CollectionUtils.isNotEmpty(services)) {
+        if (CollectionUtils.isEmpty(services)) {
             throw new IllegalArgumentException(" must be defined.");
         }
         this.brick = brick;

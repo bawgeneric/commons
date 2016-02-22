@@ -24,7 +24,6 @@ package io.kodokojo.commons.project.model;
 
 import io.kodokojo.commons.utils.RSAUtils;
 
-import java.io.IOException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -97,12 +96,8 @@ public class UserService {
 
     @Override
     public String toString() {
-        String encodePublicKey = "[--]";
-        try {
-            encodePublicKey = RSAUtils.encodePublicKey(publicKey, name);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String encodePublicKey = RSAUtils.encodePublicKey(publicKey, name);
+
         return "UserService{" +
                 "name='" + name + '\'' +
                 "identifier='" + identifier + '\'' +

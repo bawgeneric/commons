@@ -86,7 +86,6 @@ public class BrickConfiguration implements Configuration {
         this.versionDate = versionDate;
     }
 
-
     public Brick getBrick() {
         return brick;
     }

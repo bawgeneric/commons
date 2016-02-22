@@ -26,6 +26,8 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class User {
 
+    private final String identifier;
+
     private final String name;
 
     private final String username;
@@ -36,18 +38,26 @@ public class User {
 
     private final String sshPublicKey;
 
-    public User(String name, String username, String email, String password, String sshPublicKey) {
+    public User(String identifier, String name, String username, String email, String password, String sshPublicKey) {
+        if (isBlank(identifier)) {
+            throw new IllegalArgumentException("identifier must be defined.");
+        }
         if (isBlank(name)) {
             throw new IllegalArgumentException("name must be defined.");
         }
         if (isBlank(username)) {
             throw new IllegalArgumentException("username must be defined.");
         }
+        this.identifier = identifier;
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.sshPublicKey = sshPublicKey;
+    }
+
+    public String getIdentifier() {
+        return identifier;
     }
 
     public String getName() {
@@ -73,6 +83,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
+                "identifier='" + identifier + '\'' +
                 "name='" + name + '\'' +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +

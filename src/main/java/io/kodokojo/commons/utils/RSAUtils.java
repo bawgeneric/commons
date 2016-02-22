@@ -133,7 +133,7 @@ public class RSAUtils {
         }
     }
 
-    public static String encodePublicKey(RSAPublicKey rsaPublicKey, String userEmail) throws IOException {
+    public static String encodePublicKey(RSAPublicKey rsaPublicKey, String userEmail)  {
         if (rsaPublicKey == null) {
             throw new IllegalArgumentException("rsaPublicKey must be defined.");
         }
@@ -142,14 +142,18 @@ public class RSAUtils {
         }
         ByteArrayOutputStream byteOs = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(byteOs);
-        dos.writeInt(SSH_RSA.getBytes().length);
-        dos.write(SSH_RSA.getBytes());
-        dos.writeInt(rsaPublicKey.getPublicExponent().toByteArray().length);
-        dos.write(rsaPublicKey.getPublicExponent().toByteArray());
-        dos.writeInt(rsaPublicKey.getModulus().toByteArray().length);
-        dos.write(rsaPublicKey.getModulus().toByteArray());
-        String publicKeyEncoded = new String(Base64.encodeBase64(byteOs.toByteArray()));
-        return String.format(PUBLIC_KEY_OUTPUT, SSH_RSA, publicKeyEncoded, userEmail);
+        try {
+            dos.writeInt(SSH_RSA.getBytes().length);
+            dos.write(SSH_RSA.getBytes());
+            dos.writeInt(rsaPublicKey.getPublicExponent().toByteArray().length);
+            dos.write(rsaPublicKey.getPublicExponent().toByteArray());
+            dos.writeInt(rsaPublicKey.getModulus().toByteArray().length);
+            dos.write(rsaPublicKey.getModulus().toByteArray());
+            String publicKeyEncoded = new String(Base64.encodeBase64(byteOs.toByteArray()));
+            return String.format(PUBLIC_KEY_OUTPUT, SSH_RSA, publicKeyEncoded, userEmail);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write un a memory DataOutputStream.", e);
+        }
     }
 
 }
