@@ -23,13 +23,17 @@ package io.kodokojo.commons.utils;
  */
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.openssl.PEMUtilities;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemWriter;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -130,6 +134,21 @@ public class RSAUtils {
             return (RSAPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(unwrap.getEncoded()));
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new RuntimeException("Unable to unwrap public key.", e);
+        }
+    }
+
+    public static void writeRsaPrivateKey(RSAPrivateKey privateKey, StringWriter sw) {
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(
+                privateKey.getEncoded());
+
+        try {
+            PemWriter writer = new PemWriter(sw);
+            writer.writeObject(new PemObject("RSA PRIVATE KEY", privateKey.getEncoded()));
+            writer.flush();
+            //outputStream.write(pkcs8EncodedKeySpec.getEncoded());
+
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write a private rsa key in output stream", e);
         }
     }
 
