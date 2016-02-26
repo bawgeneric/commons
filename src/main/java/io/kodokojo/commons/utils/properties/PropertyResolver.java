@@ -23,10 +23,14 @@ package io.kodokojo.commons.utils.properties;
  */
 
 import io.kodokojo.commons.utils.properties.provider.PropertyValueProvider;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class PropertyResolver {
 
@@ -53,7 +57,29 @@ public class PropertyResolver {
             if (keyAnnotation == null) {
                 return method.invoke(proxy, args);
             }
-            return propertyValueProvider.providePropertyValue(method.getReturnType(), keyAnnotation.value());
+            Object value = propertyValueProvider.providePropertyValue(method.getReturnType(), keyAnnotation.value());
+            if (isNotBlank(keyAnnotation.defaultValue()) && value == null) {
+                value = getDefaultValue(method.getReturnType(), keyAnnotation.defaultValue());
+            }
+            return value;
         }
     }
+
+    private static Object getDefaultValue(Class<?> expectedType, Object value){
+        if (String.class.isAssignableFrom(expectedType)) {
+            return value.toString();
+        } else if (Integer.class.isAssignableFrom(expectedType) || int.class.isAssignableFrom(expectedType)) {
+            return Integer.parseInt(value.toString());
+        } else if (Long.class.isAssignableFrom(expectedType) || long.class.isAssignableFrom(expectedType)) {
+            return Long.parseLong(value.toString());
+        }  else if (BigDecimal.class.isAssignableFrom(expectedType)) {
+            return new BigDecimal(value.toString());
+        } else if (Double.class.isAssignableFrom(expectedType) || double.class.isAssignableFrom(expectedType)) {
+            return Double.valueOf(value.toString());
+        } else if (Boolean.class.isAssignableFrom(expectedType) || boolean.class.isAssignableFrom(expectedType)) {
+            return Boolean.parseBoolean(value.toString());
+        }
+        return value;
+    }
 }
+

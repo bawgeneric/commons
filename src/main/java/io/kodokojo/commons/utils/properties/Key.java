@@ -31,4 +31,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Key {
     String value();
+
+    String defaultValue() default "";
 }

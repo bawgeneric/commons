@@ -22,11 +22,6 @@ package io.kodokojo.commons.utils;
  * #L%
  */
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.openssl.PEMUtilities;
-import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 
@@ -40,6 +35,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -168,7 +164,7 @@ public class RSAUtils {
             dos.write(rsaPublicKey.getPublicExponent().toByteArray());
             dos.writeInt(rsaPublicKey.getModulus().toByteArray().length);
             dos.write(rsaPublicKey.getModulus().toByteArray());
-            String publicKeyEncoded = new String(Base64.encodeBase64(byteOs.toByteArray()));
+            String publicKeyEncoded = new String(Base64.getEncoder().encode(byteOs.toByteArray()));
             return String.format(PUBLIC_KEY_OUTPUT, SSH_RSA, publicKeyEncoded, userEmail);
         } catch (IOException e) {
             throw new RuntimeException("Unable to write un a memory DataOutputStream.", e);
