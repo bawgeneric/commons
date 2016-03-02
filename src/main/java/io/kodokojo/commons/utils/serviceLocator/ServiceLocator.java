@@ -23,7 +23,7 @@ package io.kodokojo.commons.utils.servicelocator;
  */
 
 
-import io.kodokojo.commons.project.model.Service;
+import io.kodokojo.commons.model.Service;
 
 import java.util.Set;
 

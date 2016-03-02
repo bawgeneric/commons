@@ -26,7 +26,7 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Filters;
 import io.kodokojo.commons.config.KodokojoConfig;
-import io.kodokojo.commons.project.model.Service;
+import io.kodokojo.commons.model.Service;
 import io.kodokojo.commons.utils.docker.DockerSupport;
 import io.kodokojo.commons.utils.servicelocator.ServiceLocator;
 import org.apache.commons.collections4.CollectionUtils;

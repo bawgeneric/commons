@@ -1,4 +1,4 @@
-package io.kodokojo.commons.project.model;
+package io.kodokojo.commons.model;
 
 /*
  * #%L

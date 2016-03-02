@@ -30,6 +30,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -60,6 +62,7 @@ public class RSAUtils {
     }
 
     public static KeyPair generateRsaKeyPair() throws NoSuchAlgorithmException {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(RSA);
         keyPairGenerator.initialize(KEY_SIZE, SecureRandom.getInstance(SHA_1_PRNG));
         return keyPairGenerator.generateKeyPair();
@@ -133,10 +136,7 @@ public class RSAUtils {
         }
     }
 
-    public static void writeRsaPrivateKey(RSAPrivateKey privateKey, StringWriter sw) {
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(
-                privateKey.getEncoded());
-
+    public static void writeRsaPrivateKey(RSAPrivateKey privateKey, Writer sw) {
         try {
             PemWriter writer = new PemWriter(sw);
             writer.writeObject(new PemObject("RSA PRIVATE KEY", privateKey.getEncoded()));

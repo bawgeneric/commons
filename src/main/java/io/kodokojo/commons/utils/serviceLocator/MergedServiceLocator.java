@@ -22,7 +22,7 @@ package io.kodokojo.commons.utils.servicelocator;
  * #L%
  */
 
-import io.kodokojo.commons.project.model.Service;
+import io.kodokojo.commons.model.Service;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.HashSet;

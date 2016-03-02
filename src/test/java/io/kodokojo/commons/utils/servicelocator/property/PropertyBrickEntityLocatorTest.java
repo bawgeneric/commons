@@ -22,7 +22,7 @@ package io.kodokojo.commons.utils.servicelocator.property;
  * #L%
  */
 
-import io.kodokojo.commons.project.model.Service;
+import io.kodokojo.commons.model.Service;
 import io.kodokojo.commons.utils.properties.provider.JavaArgumentPropertyValueProvider;
 import io.kodokojo.commons.utils.properties.provider.PropertyValueProvider;
 
