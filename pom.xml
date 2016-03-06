@@ -149,12 +149,6 @@
         </dependency>
 
         <!-- Testing -->
-        <!--dependency>
-            <groupId>io.kodokojo</groupId>
-            <artifactId>kodokojo-commons-tests</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -328,17 +322,11 @@
                 <version>0.7.5.201505241946</version>
                 <configuration>
                     <excludes>
-                        <exclude>io/kodokojo/commons/config/*.class</exclude>
-                        <exclude>io/kodokojo/commons/docker/model/Docker*.class</exclude>
-                        <exclude>io/kodokojo/commons/docker/model/Image*.class</exclude>
-                        <exclude>io/kodokojo/commons/utils/*.class</exclude>
-                        <exclude>io/kodokojo/commons/docker/fetcher/git/GitDockerFileScmEntry.class</exclude>
-                        <exclude>io/kodokojo/commons/**/*Test.class</exclude>
-                        <exclude>io/kodokojo/commons/**/*Given.class</exclude>
-                        <exclude>io/kodokojo/commons/**/*Then.class</exclude>
-                        <exclude>io/kodokojo/commons/**/*When.class</exclude>
-                        <exclude>io/kodokojo/commons/bdd/RetrofitEntrypointSupport.class</exclude>
-                        <exclude>io/kodokojo/commons/utils/DockerClientSupport.class</exclude>
+                        <exclude>io/kodokojo/model/*.class</exclude>
+                        <exclude>io/kodokojo/bdd/stage/**/*Test.class</exclude>
+                        <exclude>io/kodokojo/bdd/stage/**/*Given.class</exclude>
+                        <exclude>io/kodokojo/bdd/stage/**/*Then.class</exclude>
+                        <exclude>io/kodokojo/bdd/stage/**/*When.class</exclude>
                     </excludes>
                 </configuration>
 

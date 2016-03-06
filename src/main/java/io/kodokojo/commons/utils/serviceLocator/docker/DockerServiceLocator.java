@@ -71,7 +71,7 @@ public class DockerServiceLocator implements ServiceLocator {
         }
         List<String> labels = new ArrayList<>(Arrays.asList(
                 COMPONENT_TYPE_KEY+ "=" + type,
-                COMPONENT_NAME_KEY + "a=" + name)
+                COMPONENT_NAME_KEY + "=" + name)
         );
 
         Set<Service> services = searchServicesWithLabel(labels);
