@@ -25,13 +25,9 @@ package io.kodokojo.commons.utils;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
 import java.io.*;
 import java.security.*;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -148,7 +144,7 @@ public class RSAUtils {
         }
     }
 
-    public static String encodePublicKey(RSAPublicKey rsaPublicKey, String userEmail)  {
+    public static String encodePublicKey(RSAPublicKey rsaPublicKey, String userEmail) {
         if (rsaPublicKey == null) {
             throw new IllegalArgumentException("rsaPublicKey must be defined.");
         }
@@ -168,6 +164,59 @@ public class RSAUtils {
             return String.format(PUBLIC_KEY_OUTPUT, SSH_RSA, publicKeyEncoded, userEmail);
         } catch (IOException e) {
             throw new RuntimeException("Unable to write un a memory DataOutputStream.", e);
+        }
+    }
+
+
+    public static byte[] encryptWithAES(Key key, String data) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return cipher.doFinal(data.getBytes());
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            throw new RuntimeException("Unable to create Cipher", e);
+        }
+    }
+
+    public static String decryptWithAES(Key key, byte[] encrypted) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return new String(cipher.doFinal(encrypted));
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            throw new RuntimeException("Unable to create Cipher", e);
+        }
+    }
+
+    public static byte[] encryptObjectWithAES(Key key, Serializable data) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                SealedObject sealedObject = new SealedObject(data, cipher);
+                CipherOutputStream cipherOutputStream = new CipherOutputStream(out, cipher);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(cipherOutputStream);
+                objectOutputStream.writeObject(sealedObject);
+                return out.toByteArray();
+            }
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | IOException e) {
+            throw new RuntimeException("Unable to create Cipher", e);
+        }
+    }
+
+    public static Serializable decryptObjectWithAES(Key key, byte[] encrypted) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            ByteArrayInputStream in = new ByteArrayInputStream(encrypted);
+            CipherInputStream cipherInputStream = new CipherInputStream(in, cipher);
+            ObjectInputStream objectInputStream = new ObjectInputStream(cipherInputStream);
+            SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
+            return (Serializable) sealedObject.getObject(cipher);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | IOException e) {
+            throw new RuntimeException("Unable to create Cipher", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to found SealedObject class", e);
         }
     }
 

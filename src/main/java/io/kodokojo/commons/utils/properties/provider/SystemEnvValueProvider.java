@@ -31,6 +31,10 @@ public class SystemEnvValueProvider extends AbstarctStringPropertyValueProvider 
         if (isBlank(key)) {
             throw new IllegalArgumentException("key must be defined.");
         }
-        return System.getenv(key);
+        String res = System.getenv(key);
+        if (key.contains(".") && isBlank(res)) {
+            res = System.getenv(key.replaceAll("\\.", "_"));
+        }
+        return res;
     }
 }

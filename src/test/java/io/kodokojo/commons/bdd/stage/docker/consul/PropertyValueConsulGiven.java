@@ -32,6 +32,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.squareup.okhttp.*;
 import com.tngtech.jgiven.Stage;
+import com.tngtech.jgiven.annotation.AfterScenario;
 import com.tngtech.jgiven.annotation.BeforeScenario;
 import com.tngtech.jgiven.annotation.ProvidedScenarioState;
 import com.tngtech.jgiven.annotation.Quoted;
@@ -132,6 +133,11 @@ public class PropertyValueConsulGiven<SELF extends PropertyValueConsulGiven<?>> 
         dockerConfig = injector.getInstance(DockerConfig.class);
         dockerSupport = new DockerSupport(dockerConfig);
     }
+    @AfterScenario
+    public void tear_down() {
+        dockerClientSupport.stopAndRemoveContainer();
+    }
+
 
 
     protected String startContainer(CreateContainerCmd createContainerCmd, String name) {

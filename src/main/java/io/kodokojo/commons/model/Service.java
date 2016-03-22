@@ -32,7 +32,9 @@ public class Service {
 
     private final int port;
 
-    public Service(String name, String host, int port) {
+    private final ServiceType type;
+
+    public Service(String name, String host, int port, ServiceType type) {
         if (isBlank(name)) {
             throw new IllegalArgumentException("name must be defined.");
         }
@@ -45,6 +47,11 @@ public class Service {
         this.name = name;
         this.host = host;
         this.port = port;
+        this.type = type;
+    }
+
+    public Service(String name, String host, int port) {
+        this(name, host, port, ServiceType.UNKNOWN);
     }
 
     public String getName() {
@@ -59,12 +66,17 @@ public class Service {
         return port;
     }
 
+    public ServiceType getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         return "Service{" +
                 "name='" + name + '\'' +
                 ", host='" + host + '\'' +
                 ", port=" + port +
+                ", type=" + type +
                 '}';
     }
 }
