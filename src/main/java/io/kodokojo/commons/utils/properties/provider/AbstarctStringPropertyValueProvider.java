@@ -52,7 +52,7 @@ public abstract class AbstarctStringPropertyValueProvider implements PropertyVal
             } else if (classType.equals(Boolean.class)) {
                 return (T) Boolean.valueOf(value);
             } else {
-                throw new IllegalArgumentException("Unable to convert Property to type '" + classType.getCanonicalName() + "'.");
+                throw new IllegalArgumentException("Unable to convert Property '" + key + "' with value '" + value + "' to type '" + classType.getCanonicalName() + "'.");
             }
         }
         return null;
