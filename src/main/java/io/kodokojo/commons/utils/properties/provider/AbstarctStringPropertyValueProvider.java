@@ -43,13 +43,13 @@ public abstract class AbstarctStringPropertyValueProvider implements PropertyVal
         if (value != null) {
             if (classType.equals(String.class)) {
                 return (T) value;
-            } else if (classType.equals(Integer.class)) {
+            } else if (classType.equals(Integer.class) || int.class.isAssignableFrom(classType)) {
                 return (T) Integer.valueOf(value);
-            } else if (classType.equals(Long.class)) {
+            } else if (classType.equals(Long.class)|| long.class.isAssignableFrom(classType)) {
                 return (T) Long.valueOf(value);
             } else if (classType.equals(BigDecimal.class)) {
                 return (T) new BigDecimal(value);
-            } else if (classType.equals(Boolean.class)) {
+            } else if (classType.equals(Boolean.class)|| boolean.class.isAssignableFrom(classType)) {
                 return (T) Boolean.valueOf(value);
             } else {
                 throw new IllegalArgumentException("Unable to convert Property '" + key + "' with value '" + value + "' to type '" + classType.getCanonicalName() + "'.");
