@@ -24,11 +24,12 @@ package io.kodokojo.commons.utils.ssl;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.io.Serializable;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-public class SSLKeyPair {
+public class SSLKeyPair implements Serializable {
 
     private final RSAPrivateKey privateKey;
 

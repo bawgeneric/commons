@@ -26,6 +26,7 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 
 import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -52,6 +53,7 @@ public class RSAUtils {
     private static final String AES = "AES";
 
     private static final String AES_ECB_NO_PADDING = "AES";
+    public static final String AES_ECB_PKCS5_PADDING = "AES/ECB/PKCS5Padding";
 
     private RSAUtils() {
         // Utility Class
@@ -190,13 +192,15 @@ public class RSAUtils {
 
     public static byte[] encryptObjectWithAES(Key key, Serializable data) {
         try {
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            SecretKeySpec sks = new SecretKeySpec(key.getEncoded(), AES_ECB_PKCS5_PADDING);
+            Cipher cipher = Cipher.getInstance(AES_ECB_PKCS5_PADDING);
+            cipher.init(Cipher.ENCRYPT_MODE, sks);
             try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                 SealedObject sealedObject = new SealedObject(data, cipher);
                 CipherOutputStream cipherOutputStream = new CipherOutputStream(out, cipher);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(cipherOutputStream);
                 objectOutputStream.writeObject(sealedObject);
+                objectOutputStream.close();
                 return out.toByteArray();
             }
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | IOException e) {
@@ -206,8 +210,9 @@ public class RSAUtils {
 
     public static Serializable decryptObjectWithAES(Key key, byte[] encrypted) {
         try {
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, key);
+            SecretKeySpec sks = new SecretKeySpec(key.getEncoded(),AES_ECB_PKCS5_PADDING);
+            Cipher cipher = Cipher.getInstance(AES_ECB_PKCS5_PADDING);
+            cipher.init(Cipher.DECRYPT_MODE, sks);
             ByteArrayInputStream in = new ByteArrayInputStream(encrypted);
             CipherInputStream cipherInputStream = new CipherInputStream(in, cipher);
             ObjectInputStream objectInputStream = new ObjectInputStream(cipherInputStream);
