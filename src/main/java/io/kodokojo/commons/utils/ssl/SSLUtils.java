@@ -38,10 +38,8 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
@@ -53,6 +51,14 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static org.bouncycastle.asn1.x509.Extension.basicConstraints;
+import static org.bouncycastle.asn1.x509.Extension.subjectKeyIdentifier;
+import static org.bouncycastle.asn1.x509.KeyUsage.cRLSign;
+import static org.bouncycastle.asn1.x509.KeyUsage.dataEncipherment;
+import static org.bouncycastle.asn1.x509.KeyUsage.digitalSignature;
+import static org.bouncycastle.asn1.x509.KeyUsage.keyCertSign;
+import static org.bouncycastle.asn1.x509.KeyUsage.keyEncipherment;
 
 public class SSLUtils {
 
@@ -78,30 +84,14 @@ public class SSLUtils {
             KeyPair keyPair = RSAUtils.generateRsaKeyPair();
             RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
             RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-            X509Certificate issuerCertificate = issuerCertificateChain[0];
-            BigInteger serial = BigInteger.valueOf(new SecureRandom(publicKey.getEncoded()).nextLong());
-            long end = System.currentTimeMillis() + duration;
 
-            JcaX509v3CertificateBuilder certificateBuilder = new JcaX509v3CertificateBuilder(new org.bouncycastle.asn1.x500.X500Name(issuerCertificate.getSubjectDN().getName()), serial, new Date(), new Date(end), new org.bouncycastle.asn1.x500.X500Name(COMMON_NAME_ENTRY + commonsName), publicKey);
-            JcaX509ExtensionUtils jcaX509ExtensionUtils = new JcaX509ExtensionUtils();
-            certificateBuilder.addExtension(Extension.subjectKeyIdentifier, false, jcaX509ExtensionUtils.createSubjectKeyIdentifier(publicKey));
+            JcaX509v3CertificateBuilder certificateBuilder = addJcaX509Extension(commonsName, publicKey, issuerCertificateChain[0], duration, isCaCertificate);
 
-            certificateBuilder.addExtension(Extension.basicConstraints, isCaCertificate, new BasicConstraints(isCaCertificate));
             if (isCaCertificate) {
-                ASN1EncodableVector purposes = new ASN1EncodableVector();
-                purposes.add(KeyPurposeId.id_kp_serverAuth);
-                purposes.add(KeyPurposeId.id_kp_clientAuth);
-                purposes.add(KeyPurposeId.anyExtendedKeyUsage);
-                certificateBuilder.addExtension(Extension.extendedKeyUsage, false, new DERSequence(purposes));
-
-                KeyUsage keyUsage = new KeyUsage(KeyUsage.keyCertSign | KeyUsage.digitalSignature | KeyUsage.keyEncipherment | KeyUsage.dataEncipherment | KeyUsage.cRLSign);
-                certificateBuilder.addExtension(Extension.keyUsage, false, keyUsage);
+                addASN1AndKeyUsageExtensions(certificateBuilder);
             }
 
-            ContentSigner signer = new JcaContentSignerBuilder(SIGNATURE_ALGORITHM).setProvider(PROVIDER_NAME).build(caPrivateKey);
-            X509Certificate cert = new JcaX509CertificateConverter().setProvider(PROVIDER_NAME).getCertificate(certificateBuilder.build(signer));
-            cert.checkValidity(new Date());
-            cert.verify(caPublicKey);
+            X509Certificate cert = verifyCertificate(caPrivateKey, caPublicKey, certificateBuilder);
 
             List<X509Certificate> x509Certificates = new ArrayList<>(Arrays.asList(issuerCertificateChain));
             x509Certificates.add(0, cert);
@@ -112,39 +102,60 @@ public class SSLUtils {
         }
     }
 
+    private static JcaX509v3CertificateBuilder addJcaX509Extension(String commonsName, RSAPublicKey publicKey, X509Certificate issuerCertificate, long duration, boolean isCaCertificate) throws NoSuchAlgorithmException, CertIOException {
+        long end = System.currentTimeMillis() + duration;
+
+        BigInteger serial = BigInteger.valueOf(new SecureRandom(publicKey.getEncoded()).nextLong());
+
+        JcaX509v3CertificateBuilder certificateBuilder = new JcaX509v3CertificateBuilder(new org.bouncycastle.asn1.x500.X500Name(issuerCertificate.getSubjectDN().getName()), serial, new Date(), new Date(end), new org.bouncycastle.asn1.x500.X500Name(COMMON_NAME_ENTRY + commonsName), publicKey);
+        JcaX509ExtensionUtils jcaX509ExtensionUtils = new JcaX509ExtensionUtils();
+        certificateBuilder.addExtension(subjectKeyIdentifier, false, jcaX509ExtensionUtils.createSubjectKeyIdentifier(publicKey));
+        certificateBuilder.addExtension(basicConstraints, isCaCertificate, new BasicConstraints(isCaCertificate));
+
+        return certificateBuilder;
+    }
+
     public static SSLKeyPair createSelfSignedSSLKeyPair(String commonsName, RSAPrivateKey caPrivateKey, RSAPublicKey caPublicKey) {
 
         try {
             BigInteger serial = BigInteger.valueOf(new Random().nextInt());
             long end = System.currentTimeMillis() + DEFAULT_CERTIFICATE_DURATION_VALIDITY;
 
-            org.bouncycastle.asn1.x500.X500Name commonsX500Name = new org.bouncycastle.asn1.x500.X500Name("CN=" + commonsName);
+            org.bouncycastle.asn1.x500.X500Name commonsX500Name = new org.bouncycastle.asn1.x500.X500Name(COMMON_NAME_ENTRY + commonsName);
             JcaX509v3CertificateBuilder certificateBuilder = new JcaX509v3CertificateBuilder(commonsX500Name, serial, new Date(), new Date(end), commonsX500Name, caPublicKey);
             JcaX509ExtensionUtils jcaX509ExtensionUtils = new JcaX509ExtensionUtils();
-            certificateBuilder.addExtension(Extension.subjectKeyIdentifier, false, jcaX509ExtensionUtils.createSubjectKeyIdentifier(caPublicKey));
+            certificateBuilder.addExtension(subjectKeyIdentifier, false, jcaX509ExtensionUtils.createSubjectKeyIdentifier(caPublicKey));
 
-            certificateBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(true));
+            certificateBuilder.addExtension(basicConstraints, true, new BasicConstraints(true));
 
-            ASN1EncodableVector purposes = new ASN1EncodableVector();
-            purposes.add(KeyPurposeId.id_kp_serverAuth);
-            purposes.add(KeyPurposeId.id_kp_clientAuth);
-            purposes.add(KeyPurposeId.anyExtendedKeyUsage);
-            certificateBuilder.addExtension(Extension.extendedKeyUsage, false, new DERSequence(purposes));
+            addASN1AndKeyUsageExtensions(certificateBuilder);
 
-            KeyUsage keyUsage = new KeyUsage(KeyUsage.keyCertSign | KeyUsage.digitalSignature | KeyUsage.keyEncipherment | KeyUsage.dataEncipherment | KeyUsage.cRLSign);
-            certificateBuilder.addExtension(Extension.keyUsage, false, keyUsage);
-
-
-            ContentSigner signer = new JcaContentSignerBuilder(SIGNATURE_ALGORITHM).setProvider(PROVIDER_NAME).build(caPrivateKey);
-            X509Certificate cert = new JcaX509CertificateConverter().setProvider(PROVIDER_NAME).getCertificate(certificateBuilder.build(signer));
-            cert.checkValidity(new Date());
-            cert.verify(caPublicKey);
+            X509Certificate cert = verifyCertificate(caPrivateKey, caPublicKey, certificateBuilder);
 
             return new SSLKeyPair(caPrivateKey, caPublicKey, new X509Certificate[]{cert});
 
         } catch (NoSuchAlgorithmException | CertIOException | CertificateException | InvalidKeyException | OperatorCreationException | SignatureException | NoSuchProviderException e) {
             throw new RuntimeException("Unable to generate SSL certificate for " + commonsName, e);
         }
+    }
+
+    private static void addASN1AndKeyUsageExtensions(JcaX509v3CertificateBuilder certificateBuilder) throws CertIOException {
+        ASN1EncodableVector purposes = new ASN1EncodableVector();
+        purposes.add(KeyPurposeId.id_kp_serverAuth);
+        purposes.add(KeyPurposeId.id_kp_clientAuth);
+        purposes.add(KeyPurposeId.anyExtendedKeyUsage);
+        certificateBuilder.addExtension(Extension.extendedKeyUsage, false, new DERSequence(purposes));
+
+        KeyUsage keyUsage = new KeyUsage(keyCertSign | digitalSignature | keyEncipherment | dataEncipherment | cRLSign);
+        certificateBuilder.addExtension(Extension.keyUsage, false, keyUsage);
+    }
+
+    private static X509Certificate verifyCertificate(PrivateKey caPrivateKey, PublicKey caPublicKey, JcaX509v3CertificateBuilder certificateBuilder) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+        ContentSigner signer = new JcaContentSignerBuilder(SIGNATURE_ALGORITHM).setProvider(PROVIDER_NAME).build(caPrivateKey);
+        X509Certificate cert = new JcaX509CertificateConverter().setProvider(PROVIDER_NAME).getCertificate(certificateBuilder.build(signer));
+        cert.checkValidity(new Date());
+        cert.verify(caPublicKey);
+        return cert;
     }
 
     public static SSLKeyPair createSSLKeyPair(String commonsName, PrivateKey caPrivateKey, PublicKey caPublicKey, X509Certificate[] issuerCertificateChain) {
