@@ -31,20 +31,30 @@ import io.kodokojo.commons.utils.servicelocator.ServiceLocator;
 import org.apache.commons.lang.StringUtils;
 import retrofit.RestAdapter;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 public class MarathonServiceLocator implements ServiceLocator {
 
     private final MarathonRestApi marathonRestApi;
 
+    @Inject
     public MarathonServiceLocator(String marathonUrl) {
-        RestAdapter adapter = new RestAdapter.Builder().setEndpoint(marathonUrl).build();
-        marathonRestApi = adapter.create(MarathonRestApi.class);
+        if (isBlank(marathonUrl)) {
+            throw new IllegalArgumentException("marathonUrl must be defined.");
+        }
+        marathonRestApi = provideMarathonRestApi(marathonUrl);
     }
 
+    protected MarathonRestApi provideMarathonRestApi(String marathonUrl) {
+        RestAdapter adapter = new RestAdapter.Builder().setEndpoint(marathonUrl).build();
+        return adapter.create(MarathonRestApi.class);
+    }
 
     @Override
     public Set<Service> getService(String type, String name) {
