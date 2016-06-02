@@ -22,19 +22,28 @@ package io.kodokojo.commons.utils;
  * #L%
  */
 
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -53,7 +62,12 @@ public class RSAUtils {
     private static final String AES = "AES";
 
     private static final String AES_ECB_NO_PADDING = "AES";
+
     public static final String AES_ECB_PKCS5_PADDING = "AES/ECB/PKCS5Padding";
+
+    private static final Pattern PRIVATE_PATTERN = Pattern.compile("(-----BEGIN RSA PRIVATE KEY-----\n.*\n-----END RSA PRIVATE KEY-----?)", Pattern.DOTALL);
+
+    private static final Pattern PUBLIC_PATTERN = Pattern.compile("(-----BEGIN CERTIFICATE-----\n.*\n-----END CERTIFICATE-----)", Pattern.DOTALL);
 
     private RSAUtils() {
         // Utility Class
@@ -146,6 +160,33 @@ public class RSAUtils {
         }
     }
 
+    public static RSAPrivateKey readRsaPrivateKey(Reader reader) {
+        Security.addProvider(new BouncyCastleProvider());
+        try {
+            KeyFactory factory = KeyFactory.getInstance("RSA", "BC");
+
+            PemReader pemReader = new PemReader(reader);
+            PemObject privatePem = pemReader.readPemObject();
+            PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(privatePem.getContent());
+            RSAPrivateKey privateKey = (RSAPrivateKey) factory.generatePrivate(privateSpec);
+            return privateKey;
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException | NoSuchProviderException e) {
+            throw new RuntimeException("Unable to extract private RAS Key .", e);
+        }
+    }
+
+    public static X509Certificate readRsaPublicKey(Reader reader) {
+        Security.addProvider(new BouncyCastleProvider());
+        try {
+            PEMParser pemParser = new PEMParser(reader);
+            X509CertificateHolder cert = (X509CertificateHolder) pemParser.readObject();
+            JcaX509CertificateConverter certificateConverter = new JcaX509CertificateConverter();
+            return certificateConverter.getCertificate(cert);
+        } catch (IOException | CertificateException e) {
+            throw new RuntimeException("Unable to extract public RAS Key .", e);
+        }
+    }
+
     public static String encodePublicKey(RSAPublicKey rsaPublicKey, String userEmail) {
         if (rsaPublicKey == null) {
             throw new IllegalArgumentException("rsaPublicKey must be defined.");
@@ -167,6 +208,23 @@ public class RSAUtils {
         } catch (IOException e) {
             throw new RuntimeException("Unable to write un a memory DataOutputStream.", e);
         }
+    }
+
+
+    public static String extractPrivateKey(String content) {
+        if (content == null) {
+            throw new IllegalArgumentException("content must be defined.");
+        }
+        Matcher matcher = PRIVATE_PATTERN.matcher(content);
+        return matcher.find() ? matcher.group(1) : null;
+    }
+
+    public static String extractPublic(String content) {
+        if (content == null) {
+            throw new IllegalArgumentException("content must be defined.");
+        }
+        Matcher matcher = PUBLIC_PATTERN.matcher(content);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
 
@@ -210,7 +268,7 @@ public class RSAUtils {
 
     public static Serializable decryptObjectWithAES(Key key, byte[] encrypted) {
         try {
-            SecretKeySpec sks = new SecretKeySpec(key.getEncoded(),AES_ECB_PKCS5_PADDING);
+            SecretKeySpec sks = new SecretKeySpec(key.getEncoded(), AES_ECB_PKCS5_PADDING);
             Cipher cipher = Cipher.getInstance(AES_ECB_PKCS5_PADDING);
             cipher.init(Cipher.DECRYPT_MODE, sks);
             ByteArrayInputStream in = new ByteArrayInputStream(encrypted);

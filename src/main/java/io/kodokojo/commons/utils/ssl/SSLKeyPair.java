@@ -35,7 +35,6 @@ public class SSLKeyPair implements Serializable {
 
     private final RSAPublicKey publicKey;
 
-
     private final X509Certificate[] certificates;
 
     public SSLKeyPair(RSAPrivateKey privateKey, RSAPublicKey publicKey, X509Certificate[] certificates) {

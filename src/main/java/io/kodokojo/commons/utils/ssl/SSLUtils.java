@@ -40,6 +40,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
